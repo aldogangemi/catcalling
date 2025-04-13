@@ -1,0 +1,66 @@
+Frame Scoring Methodology
+
+		 Base Score Components
+1. Direct Frame Manifestation (weight: 0.4)
+   - Primary core frame mentioned: +0.4
+   - Secondary core frame mentioned: +0.2
+   - Negation of frame: -0.3
+   - Opposition to frame: -0.4
+
+2. Emotional Alignment (weight: 0.3)
+   - gioia → positive for AgencyExpression, PresenceEngagement
+   - tristezza → negative for EmotionalRegulation, PresenceEngagement
+   - sorpresa → variable based on context for CognitiveAssessment
+   - disgusto → positive for SafetyManagement, negative for PresenceEngagement
+   - paura → positive for SafetyManagement, AttentionManagement
+   - rabbia → positive for EmotionalRegulation, negative for SocialPositioning
+
+3. Embodiment Influence (weight: 0.3)
+   - totalEmbo: general frame intensity
+   - ontEmbo: physical/safety frames
+   - functEmbo: cognitive/social frames
+
+		 Normalization Process
+1. Raw Score Calculation:
+   ```
+   raw_score = (direct_manifestation * 0.4) + 
+               (emotional_alignment * 0.3) + 
+               (embodiment_influence * 0.3)
+   ```
+
+2. Context Adjustment:
+   - Frame relationships from ontology
+   - Interaction effects between frames
+   - Temporal sequence implications
+
+3. Final Normalization:
+   ```
+   normalized_score = (raw_score - min_score) / (max_score - min_score) * 2 - 1
+   ```
+
+		 Frame-Specific Considerations
+
+			 Action Pattern & Behavioral Response
+- Direct behavioral descriptions: +0.4
+- Avoidance behaviors scored differently based on context
+- Physical actions weighted higher than intentions
+
+			 Cognitive & Mental Processing
+- Explicit reasoning processes: +0.3
+- Situation analysis indicators: +0.2
+- Comprehension barriers: -0.2
+
+			 Emotional & Social Frames
+- Direct emotional expressions: +0.4
+- Social interaction quality: ±0.3
+- Identity-related mentions: +0.3
+
+			 Safety & Control Frames
+- Explicit safety concerns: +0.4
+- Control mechanisms: +0.3
+- Environmental awareness: +0.2
+
+		 Quality Control
+- Cross-validation with core frames
+- Consistency check across related frames
+- Context preservation in scoring

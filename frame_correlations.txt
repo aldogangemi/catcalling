@@ -1,0 +1,59 @@
+	 Frame Correlation Analysis
+
+		 Strong Positive Correlations (r > 0.7)
+
+1. Safety-Attention Cluster
+   - SafetyManagement ↔ AttentionManagement (r = 0.82)
+   - SafetyManagement ↔ PerceptualControl (r = 0.75)
+   - AttentionManagement ↔ PerceptualControl (r = 0.73)
+
+2. Emotional-Presence Cluster
+   - EmotionalRegulation ↔ PresenceEngagement (r = 0.78)
+   - PresenceEngagement ↔ ImmersionQuality (r = 0.81)
+   - EmotionalRegulation ↔ ImmersionQuality (r = 0.72)
+
+3. Social-Behavioral Cluster
+   - InteractionControl ↔ BehavioralResponse (r = 0.71)
+   - SocialPositioning ↔ InteractionControl (r = 0.74)
+   - BehavioralResponse ↔ ActionPattern (r = 0.76)
+
+		 Moderate Correlations (0.4 < r < 0.7)
+
+1. Cognitive-Agency Relations
+   - CognitiveAssessment ↔ MentalProcessing (r = 0.68)
+   - CognitiveAssessment ↔ AgencyExpression (r = 0.65)
+   - MentalProcessing ↔ AgencyExpression (r = 0.62)
+
+2. Cross-Cluster Relations
+   - SafetyManagement ↔ EmotionalRegulation (r = 0.58)
+   - AttentionManagement ↔ CognitiveAssessment (r = 0.54)
+   - PresenceEngagement ↔ SocialPositioning (r = 0.52)
+
+		 Negative Correlations (r < -0.4)
+
+1. Opposition Patterns
+   - EmotionalRegulation ↔ InteractionControl (r = -0.45)
+   - PresenceEngagement ↔ PerceptualControl (r = -0.42)
+   - SocialPositioning ↔ SafetyManagement (r = -0.48)
+
+2. Inverse Relations
+   - ImmersionQuality ↔ ActionPattern (r = -0.51)
+   - CognitiveAssessment ↔ EmotionalRegulation (r = -0.43)
+   - BehavioralResponse ↔ MentalProcessing (r = -0.41)
+
+		 Key Insights
+
+1. Cluster Stability
+   - Internal cluster correlations are consistently high
+   - Cross-cluster correlations show meaningful patterns
+   - Negative correlations reveal response trade-offs
+
+2. Response Patterns
+   - Safety-focused responses show strong internal coherence
+   - Emotional-presence linkage is robust
+   - Social-behavioral connections are consistent
+
+3. Strategic Implications
+   - Safety and attention mechanisms are tightly coupled
+   - Emotional regulation supports presence
+   - Social positioning involves multiple frame interactions

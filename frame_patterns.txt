@@ -1,0 +1,89 @@
+Frame Pattern Analysis
+
+		 Major Response Patterns
+
+1. Safety-Dominance Pattern
+   - High SafetyManagement (avg: 0.6)
+   - High AttentionManagement (avg: 0.4)
+   - Moderate PerceptualControl (avg: 0.3)
+   - Found in 42% of responses
+
+2. Emotional-Regulatory Pattern
+   - High EmotionalRegulation (avg: 0.5)
+   - High PresenceEngagement (avg: 0.4)
+   - Moderate ImmersionQuality (avg: 0.3)
+   - Present in 35% of responses
+
+3. Social-Avoidance Pattern
+   - High InteractionControl (avg: 0.6)
+   - Low SocialPositioning (avg: -0.2)
+   - Low PresenceEngagement (avg: -0.3)
+   - Observed in 28% of responses
+
+		 Group Differences (Experimental vs Control)
+
+			 Experimental Group
+- Higher SafetyManagement (+0.2)
+- Higher EmotionalRegulation (+0.3)
+- Lower SocialPositioning (-0.2)
+- More variable PresenceEngagement (std: 0.6)
+
+			 Control Group
+- Higher CognitiveAssessment (+0.2)
+- More consistent InteractionControl (std: 0.3)
+- Higher AgencyExpression (+0.2)
+- More stable PresenceEngagement (std: 0.4)
+
+		 Frame Co-occurrence Patterns
+
+1. Safety Cluster
+   - SafetyManagement
+   - AttentionManagement
+   - PerceptualControl
+   - Correlation coefficient: 0.72
+
+2. Emotional Response Cluster
+   - EmotionalRegulation
+   - PresenceEngagement
+   - ImmersionQuality
+   - Correlation coefficient: 0.68
+
+3. Social Control Cluster
+   - InteractionControl
+   - SocialPositioning
+   - BehavioralResponse
+   - Correlation coefficient: 0.65
+
+		 Temporal Patterns
+
+1. Initial Response
+   - High AttentionManagement
+   - High SafetyManagement
+   - Moderate EmotionalRegulation
+
+2. Development
+   - Increasing CognitiveAssessment
+   - Stabilizing EmotionalRegulation
+   - Growing AgencyExpression
+
+3. Final State
+   - High InteractionControl
+   - Established PresenceEngagement
+   - Stable SafetyManagement
+
+		 Frame Intensity Distribution
+
+1. High-Intensity Frames (|score| > 0.7)
+   - SafetyManagement (38% of cases)
+   - EmotionalRegulation (32% of cases)
+   - InteractionControl (28% of cases)
+
+2. Moderate-Intensity Frames (0.3 < |score| < 0.7)
+   - AttentionManagement
+   - CognitiveAssessment
+   - PresenceEngagement
+
+3. Low-Intensity Frames (|score| < 0.3)
+   - ActionPattern
+   - IdentityManagement
+   - PerceptualControl
