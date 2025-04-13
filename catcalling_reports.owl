@@ -1,0 +1,3537 @@
+@prefix : <http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#> .
+@prefix fn: <https://w3id.org/framester/framenet/abox/frame/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix fschema: <https://w3id.org/framester/schema/> .
+@base <http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#> .
+
+<http://www.ontologydesignpatterns.org/ont/cog/catcalling_reports.owl> rdf:type owl:Ontology ;
+                                                                        rdfs:comment """The Catcalling Reports ontology models cognitive, emotional, behavioral, and social responses to catcalling and street harassment experiences, as they can be extracted from subjects' reports in immersive experiments.
+
+It establishes a frame-semantic approach where abstract cognitive frames are distinguished from their specific occurrences in real-world situations. The ontology organizes these frames into four primary clusters (Cognitive, Emotional, Safety, and Social) that interact through defined influence relationships.
+
+The distinction between frames (abstract conceptual structures) and frame occurrences (instantiations in specific situations) allows for analyzing both general response patterns and individual experiences. Frame clusters provide higher-order organization, capturing how different aspects of experience interact holistically during harassment situations.
+
+This ontology supports various reasoning capabilities, including:
+1. Tracing causal and influence chains between frames (e.g., how ThreatAnticipation triggers SafetySeeking)
+2. Identifying common response patterns through relationship analysis
+3. Comparing individual experiences by examining their evoked frame occurrences
+4. Measuring response similarity between subjects using frame overlap scoring
+5. Predicting likely frame activations based on initial situational assessments
+
+Scoring methods can be implemented to quantify relationships between experiences, such as Jaccard similarity indices between frame sets, weighted path analysis between frame occurrences, or clustering similarity based on frame occurrence patterns. These measurements allow for both qualitative understanding and quantitative analysis of harassment experiences and responses across different individuals and contexts.""" .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#clusteredInfluenceOn
+:clusteredInfluenceOn rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf :influences ;
+                      rdfs:domain :FrameCluster ;
+                      rdfs:range :FrameCluster ;
+                      rdfs:comment "Indicates a direct causal influence between frame clusters"@en ;
+                      rdfs:label "directly influences"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#hasComponent
+:hasComponent rdf:type owl:ObjectProperty ;
+              rdfs:domain :FrameCluster ;
+              rdfs:range fschema:Frame ;
+              rdfs:comment "Relates a frame cluster to its component frames"@en ;
+              rdfs:label "has component"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#influences
+:influences rdf:type owl:ObjectProperty ;
+            rdfs:domain fschema:FrameOccurrence ;
+            rdfs:range fschema:FrameOccurrence ;
+            rdfs:comment "Indicates that one frame has a modifying effect on another frame without necessarily causing it directly"@en ;
+            rdfs:label "influences"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#initiatesResponse
+:initiatesResponse rdf:type owl:ObjectProperty ;
+                   rdfs:domain :FrameCluster ;
+                   rdfs:range :FrameCluster ;
+                   rdfs:comment "Indicates that one frame cluster typically initiates a response in another cluster"@en ;
+                   rdfs:label "initiates response"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#isEvokedIn
+:isEvokedIn rdf:type owl:ObjectProperty ;
+            owl:inverseOf :reportsEvoking ;
+            rdfs:domain fschema:FrameOccurrence ;
+            rdfs:range dul:NaturalPerson ;
+            rdfs:comment "Relates a frame to a subject who evokes it in their verbal report"@en ;
+            rdfs:label "is evoked in"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#precedesTypically
+:precedesTypically rdf:type owl:ObjectProperty ;
+                   rdfs:domain fschema:FrameOccurrence ;
+                   rdfs:range fschema:FrameOccurrence ;
+                   rdfs:comment "Indicates that one frame typically occurs before another frame in temporal sequence"@en ;
+                   rdfs:label "typically precedes"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#reportsEvoking
+:reportsEvoking rdf:type owl:ObjectProperty ;
+                rdfs:domain dul:NaturalPerson ;
+                rdfs:range fschema:FrameOccurrence ;
+                rdfs:comment "Relates a subject to a frame that is evoked in their verbal report"@en ;
+                rdfs:label "reports evoking"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#requiresPresenceOf
+:requiresPresenceOf rdf:type owl:ObjectProperty ;
+                    rdfs:domain fschema:FrameOccurrence ;
+                    rdfs:range fschema:FrameOccurrence ;
+                    rdfs:comment "Indicates that one frame necessitates the existence of another frame to be manifested"@en ;
+                    rdfs:label "requires presence of"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#supports
+:supports rdf:type owl:ObjectProperty ,
+                   owl:TransitiveProperty ;
+          rdfs:domain [ rdf:type owl:Class ;
+                        owl:unionOf ( fschema:Frame
+                                      fschema:FrameOccurrence
+                                    )
+                      ] ;
+          rdfs:range [ rdf:type owl:Class ;
+                       owl:unionOf ( fschema:Frame
+                                     fschema:FrameOccurrence
+                                   )
+                     ] ;
+          rdfs:comment "Indicates that one frame resp. frame occurrence enables or reinforces another frame (at cluster level), resp. frame occurrence (at situation level)"@en ;
+          rdfs:label "supports"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#triggers
+:triggers rdf:type owl:ObjectProperty ,
+                   owl:TransitiveProperty ;
+          rdfs:domain fschema:FrameOccurrence ;
+          rdfs:range fschema:FrameOccurrence ;
+          rdfs:comment "Indicates that one frame directly causes the activation of another frame"@en ;
+          rdfs:label "triggers"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#verbalReport
+:verbalReport rdf:type owl:DatatypeProperty ;
+              rdfs:domain dul:NaturalPerson ;
+              rdfs:comment "The textual content of a subject's verbal report about their experience during the cat calling experiment"@en ;
+              rdfs:label "verbal report"@en .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ActionLimitation
+:ActionLimitation rdf:type owl:Class ;
+                  rdfs:subClassOf :AgencyExpression ,
+                                  :BehavioralResponse ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :influences ;
+                                    owl:someValuesFrom :EmotionalRegulation
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ActionPattern
+:ActionPattern rdf:type owl:Class ;
+               rdfs:subClassOf fn:Behavioral_response ,
+                               fn:Intentionally_act ,
+                               fn:Personal_response ,
+                               fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AgencyExpression
+:AgencyExpression rdf:type owl:Class ;
+                  rdfs:subClassOf fn:Control ,
+                                  fn:Intentionally_act ,
+                                  fn:Self_control ,
+                                  fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AggressiveResponse
+:AggressiveResponse rdf:type owl:Class ;
+                    rdfs:subClassOf :ActionPattern ,
+                                    :BehavioralResponse ,
+                                    :EmotionalRegulation ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :precedesTypically ;
+                                      owl:someValuesFrom :SocialDiscomfort
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :triggers ;
+                                      owl:someValuesFrom :EmotionalReactivity
+                                    ] ;
+                    owl:disjointWith :CautiousCooperation ,
+                                     :StrategicPoliteness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AngerDominance
+:AngerDominance rdf:type owl:Class ;
+                rdfs:subClassOf :BehavioralResponse ,
+                                :EmotionalRegulation ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :triggers ;
+                                  owl:someValuesFrom :AggressiveResponse
+                                ] ;
+                owl:disjointWith :EmotionalStability .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AnxietyManagement
+:AnxietyManagement rdf:type owl:Class ;
+                   rdfs:subClassOf :CopingStrategy ,
+                                   :EmotionalRegulation ,
+                                   [ owl:intersectionOf ( :EmotionalRegulation
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty :supports ;
+                                                            owl:someValuesFrom :ControlledResponse
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AttentionAwareness
+:AttentionAwareness rdf:type owl:Class ;
+                    rdfs:subClassOf :AttentionManagement ,
+                                    :CognitiveAssessment ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :supports ;
+                                      owl:someValuesFrom :SituationalAwareness
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AttentionManagement
+:AttentionManagement rdf:type owl:Class ;
+                     rdfs:subClassOf fn:Active_scanning ,
+                                     fn:Awareness ,
+                                     fn:Perception ,
+                                     fn:Scrutiny ,
+                                     fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AuthenticityAssessment
+:AuthenticityAssessment rdf:type owl:Class ;
+                        rdfs:subClassOf :CognitiveAssessment ,
+                                        :MentalProcessing ,
+                                        :SocialPositioning ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty :influences ;
+                                          owl:someValuesFrom :InteractionControl
+                                        ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#BalancedResponse
+:BalancedResponse rdf:type owl:Class ;
+                  rdfs:subClassOf :BehavioralResponse ,
+                                  :EmotionalRegulation ;
+                  rdfs:comment "A measured response that maintains equilibrium between emotional reaction and behavioral control"@en ;
+                  rdfs:label "Balanced Response"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#BehavioralResponse
+:BehavioralResponse rdf:type owl:Class ;
+                    rdfs:subClassOf fn:Avoiding ,
+                                    fn:Behavioral_response ,
+                                    fn:Personal_response ,
+                                    fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#BoundarySetting
+:BoundarySetting rdf:type owl:Class ;
+                 rdfs:subClassOf :AgencyExpression ,
+                                 :InteractionControl ,
+                                 :SocialPositioning ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :supports ;
+                                   owl:someValuesFrom :SocialProtection
+                                 ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#BriefResponse
+:BriefResponse rdf:type owl:Class ;
+               rdfs:subClassOf :ActionPattern ,
+                               :BehavioralResponse ,
+                               :InteractionControl ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :supports ;
+                                 owl:someValuesFrom :InteractionMinimization
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CautiousCooperation
+:CautiousCooperation rdf:type owl:Class ;
+                     rdfs:subClassOf :BehavioralResponse ,
+                                     :SocialPositioning ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :requiresPresenceOf ;
+                                       owl:someValuesFrom :SituationalAwareness
+                                     ] ;
+                     owl:disjointWith :InteractionRejection ,
+                                      :PhysicalAvoidance ,
+                                      :TotalAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CognitiveAssessment
+:CognitiveAssessment rdf:type owl:Class ;
+                     rdfs:subClassOf fn:Mental_activity ,
+                                     fn:Mental_stimulus_stimulus_focus ,
+                                     fn:Scrutiny ,
+                                     fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CognitiveCluster
+:CognitiveCluster rdf:type owl:Class ;
+                  owl:disjointWith :EmotionalCluster .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CommunicationAvoidance
+:CommunicationAvoidance rdf:type owl:Class ;
+                        rdfs:subClassOf :BehavioralResponse ,
+                                        :CopingStrategy ,
+                                        :InteractionControl ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty :precedesTypically ;
+                                          owl:someValuesFrom :SocialDiscomfort
+                                        ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ComprehensionAssessment
+:ComprehensionAssessment rdf:type owl:Class ;
+                         rdfs:subClassOf :CognitiveAssessment ,
+                                         :MentalProcessing ,
+                                         [ rdf:type owl:Restriction ;
+                                           owl:onProperty :influences ;
+                                           owl:someValuesFrom :ResponseEvolution
+                                         ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ComprehensionBarrier
+:ComprehensionBarrier rdf:type owl:Class ;
+                      rdfs:subClassOf :CognitiveAssessment ,
+                                      :MentalProcessing ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty :triggers ;
+                                        owl:someValuesFrom :NonResponse
+                                      ] ;
+                      owl:disjointWith :SituationalAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ControlledResponse
+:ControlledResponse rdf:type owl:Class ;
+                    rdfs:subClassOf :AgencyExpression ,
+                                    :BehavioralResponse ,
+                                    [ owl:intersectionOf ( :EmotionalRegulation
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :requiresPresenceOf ;
+                                                             owl:someValuesFrom :EmotionalStability
+                                                           ]
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :supports ;
+                                                             owl:someValuesFrom :BoundarySetting
+                                                           ]
+                                                         ) ;
+                                      rdf:type owl:Class
+                                    ] ;
+                    owl:disjointWith :EmotionalOutburst .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ConversationControl
+:ConversationControl rdf:type owl:Class ;
+                     rdfs:subClassOf :AgencyExpression ,
+                                     :InteractionControl ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :supports ;
+                                       owl:someValuesFrom :BoundarySetting
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CopingStrategy
+:CopingStrategy rdf:type owl:Class ;
+                rdfs:subClassOf fn:Avoiding ,
+                                fn:Control ,
+                                fn:Personal_response ,
+                                fn:Self_control ,
+                                fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CrowdAvoidance
+:CrowdAvoidance rdf:type owl:Class ;
+                rdfs:subClassOf :AttentionManagement ,
+                                :SafetyManagement ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :requiresPresenceOf ;
+                                  owl:someValuesFrom :EnvironmentalScanning
+                                ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CuriosityShift
+:CuriosityShift rdf:type owl:Class ;
+                rdfs:subClassOf :AgencyExpression ,
+                                :CognitiveAssessment ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :influences ;
+                                  owl:someValuesFrom :ExperientialLearning
+                                ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#DeepPresence
+:DeepPresence rdf:type owl:Class ;
+              rdfs:subClassOf :ImmersionQuality ,
+                              :PresenceEngagement ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :supports ;
+                                owl:someValuesFrom :EmotionalImmersion
+                              ] ;
+              owl:disjointWith :ExperienceRejection ,
+                               :ProgressiveDetachment .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#DefensiveResponse
+:DefensiveResponse rdf:type owl:Class ;
+                   rdfs:subClassOf :BehavioralResponse ,
+                                   :SafetyManagement ,
+                                   fn:Avoiding .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#DiscomfortAwareness
+:DiscomfortAwareness rdf:type owl:Class ;
+                     rdfs:subClassOf :CopingStrategy ,
+                                     :EmotionalRegulation ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :triggers ;
+                                       owl:someValuesFrom :CopingStrategy
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalCluster
+:EmotionalCluster rdf:type owl:Class .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalDiscomfort
+:EmotionalDiscomfort rdf:type owl:Class ;
+                     rdfs:subClassOf :CopingStrategy ,
+                                     :EmotionalRegulation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalDistress
+:EmotionalDistress rdf:type owl:Class ;
+                   rdfs:subClassOf :EmotionalRegulation ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :triggers ;
+                                     owl:someValuesFrom :CopingStrategy
+                                   ] ;
+                   owl:disjointWith :EmotionalStability .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalEvolution
+:EmotionalEvolution rdf:type owl:Class ;
+                    rdfs:subClassOf :AgencyExpression ,
+                                    :EmotionalRegulation ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :precedesTypically ;
+                                      owl:someValuesFrom :TemporalShift
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :requiresPresenceOf ;
+                                      owl:someValuesFrom :SituationalAwareness
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalImmersion
+:EmotionalImmersion rdf:type owl:Class ;
+                    owl:equivalentClass [ owl:intersectionOf ( :EmotionalRegulation
+                                                               :PresenceEngagement
+                                                               [ rdf:type owl:Restriction ;
+                                                                 owl:onProperty :influences ;
+                                                                 owl:someValuesFrom :ExperienceQuality
+                                                               ]
+                                                             ) ;
+                                          rdf:type owl:Class
+                                        ] ;
+                    rdfs:subClassOf :EmotionalRegulation ,
+                                    :ImmersionQuality ,
+                                    :PresenceEngagement ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :influences ;
+                                      owl:someValuesFrom :ExperienceQuality
+                                    ] ;
+                    owl:disjointWith :PsychologicalDistance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalIntensity
+:EmotionalIntensity rdf:type owl:Class ;
+                    rdfs:subClassOf :EmotionalRegulation ,
+                                    :PresenceEngagement ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :influences ;
+                                      owl:someValuesFrom :BehavioralResponse
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalOutburst
+:EmotionalOutburst rdf:type owl:Class ;
+                   rdfs:subClassOf :BehavioralResponse ,
+                                   :EmotionalRegulation ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :triggers ;
+                                     owl:someValuesFrom :SocialDiscomfort
+                                   ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalPresence
+:EmotionalPresence rdf:type owl:Class ;
+                   rdfs:subClassOf :EmotionalRegulation ,
+                                   :PresenceEngagement ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :supports ;
+                                     owl:someValuesFrom :DeepPresence
+                                   ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalReactivity
+:EmotionalReactivity rdf:type owl:Class ;
+                     rdfs:subClassOf :BehavioralResponse ,
+                                     :EmotionalRegulation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalRegulation
+:EmotionalRegulation rdf:type owl:Class ;
+                     rdfs:subClassOf fn:Emotion_active ,
+                                     fn:Emotion_directed ,
+                                     fn:Experiencer_focus ,
+                                     fn:Self_control ,
+                                     fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalRejection
+:EmotionalRejection rdf:type owl:Class ;
+                    rdfs:subClassOf :EmotionalRegulation ,
+                                    :PresenceEngagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalStability
+:EmotionalStability rdf:type owl:Class ;
+                    rdfs:subClassOf :EmotionalRegulation ,
+                                    [ owl:intersectionOf ( :EmotionalRegulation
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :supports ;
+                                                             owl:someValuesFrom :ControlledResponse
+                                                           ]
+                                                         ) ;
+                                      rdf:type owl:Class
+                                    ] ;
+                    owl:disjointWith :Hypervigilance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EngagementShift
+:EngagementShift rdf:type owl:Class ;
+                 rdfs:subClassOf :AgencyExpression ,
+                                 :PresenceEngagement ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :requiresPresenceOf ;
+                                   owl:someValuesFrom :SituationalAwareness
+                                 ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EnvironmentalScanning
+:EnvironmentalScanning rdf:type owl:Class ;
+                       rdfs:subClassOf :AttentionManagement ,
+                                       :SafetyManagement ,
+                                       [ owl:intersectionOf ( :SituationalAwareness
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :requiresPresenceOf ;
+                                                                owl:someValuesFrom :Hypervigilance
+                                                              ]
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :supports ;
+                                                                owl:someValuesFrom :SpaceManagement
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperienceDistance
+:ExperienceDistance rdf:type owl:Class ;
+                    rdfs:subClassOf :EmotionalRegulation ,
+                                    :PresenceEngagement ,
+                                    [ owl:intersectionOf ( :PsychologicalDistance
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :supports ;
+                                                             owl:someValuesFrom :CopingStrategy
+                                                           ]
+                                                         ) ;
+                                      rdf:type owl:Class
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :supports ;
+                                      owl:someValuesFrom :CopingStrategy
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperienceQuality
+:ExperienceQuality rdf:type owl:Class ;
+                   rdfs:subClassOf :ImmersionQuality ,
+                                   :PresenceEngagement ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :influences ;
+                                     owl:someValuesFrom :PresenceMaintenance
+                                   ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperienceRejection
+:ExperienceRejection rdf:type owl:Class ;
+                     rdfs:subClassOf :EmotionalRegulation ,
+                                     :PresenceEngagement ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :triggers ;
+                                       owl:someValuesFrom :InteractionAvoidance
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperienceResistance
+:ExperienceResistance rdf:type owl:Class ;
+                      rdfs:subClassOf :CopingStrategy ,
+                                      :EmotionalRegulation ,
+                                      :PresenceEngagement ;
+                      rdfs:comment "Active or passive resistance to fully engaging with a disturbing experience"@en ;
+                      rdfs:label "Experience Resistance"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperientialLearning
+:ExperientialLearning rdf:type owl:Class ;
+                      rdfs:subClassOf :CognitiveAssessment ,
+                                      :PresenceEngagement ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty :influences ;
+                                        owl:someValuesFrom :ResponseEvolution
+                                      ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#FearResponse
+:FearResponse rdf:type owl:Class ;
+              rdfs:subClassOf :BehavioralResponse ,
+                              :EmotionalRegulation ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :triggers ;
+                                owl:someValuesFrom :SafetySeeking
+                              ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#FrameCluster
+:FrameCluster rdf:type owl:Class ;
+              rdfs:subClassOf fschema:Frame ;
+              rdfs:comment "A grouping of semantically and functionally related frames that operate together in cognitive and emotional processing of catcalling situations. Frame clusters represent higher-order organizational units in the conceptual structure of experiences, allowing for analysis of how different aspects of experience interact."@en ;
+              rdfs:label "Frame Cluster"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#FrustrationManagement
+:FrustrationManagement rdf:type owl:Class ;
+                       rdfs:subClassOf :CopingStrategy ,
+                                       :EmotionalRegulation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#GazeAvoidance
+:GazeAvoidance rdf:type owl:Class ;
+               rdfs:subClassOf :AttentionManagement ,
+                               :BehavioralResponse ,
+                               :PerceptualControl ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :supports ;
+                                 owl:someValuesFrom :CommunicationAvoidance
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#GenderIdentity
+:GenderIdentity rdf:type owl:Class ;
+                rdfs:subClassOf :IdentityManagement ,
+                                :PresenceEngagement ,
+                                :SocialPositioning ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :influences ;
+                                  owl:someValuesFrom :Vulnerability
+                                ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#HelpingDesire
+:HelpingDesire rdf:type owl:Class ;
+               rdfs:subClassOf :AgencyExpression ,
+                               :SocialPositioning ,
+                               fn:Social_interaction .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#Hypervigilance
+:Hypervigilance rdf:type owl:Class ;
+                rdfs:subClassOf :AttentionManagement ,
+                                :SafetyManagement ,
+                                [ owl:intersectionOf ( :SituationalAwareness
+                                                       [ rdf:type owl:Restriction ;
+                                                         owl:onProperty :requiresPresenceOf ;
+                                                         owl:someValuesFrom :ThreatAnticipation
+                                                       ]
+                                                       [ rdf:type owl:Restriction ;
+                                                         owl:onProperty :triggers ;
+                                                         owl:someValuesFrom :EmotionalDistress
+                                                       ]
+                                                     ) ;
+                                  rdf:type owl:Class
+                                ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#IdentityManagement
+:IdentityManagement rdf:type owl:Class ;
+                    rdfs:subClassOf fn:Self_control ,
+                                    fn:Social_behavior_evaluation ,
+                                    fn:Social_interaction_evaluation ,
+                                    fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ImmersionQuality
+:ImmersionQuality rdf:type owl:Class ;
+                  rdfs:subClassOf fn:Awareness ,
+                                  fn:Experiencer_focus ,
+                                  fn:Mental_property ,
+                                  fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionAvoidance
+:InteractionAvoidance rdf:type owl:Class ;
+                      rdfs:subClassOf :BehavioralResponse ,
+                                      :InteractionControl ,
+                                      [ owl:intersectionOf ( :CommunicationAvoidance
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty :supports ;
+                                                               owl:someValuesFrom :SocialProtection
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionControl
+:InteractionControl rdf:type owl:Class ;
+                    rdfs:subClassOf fn:Communication ,
+                                    fn:Control ,
+                                    fn:Social_interaction ,
+                                    fn:Social_interaction_evaluation ,
+                                    fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionLimitation
+:InteractionLimitation rdf:type owl:Class ;
+                       rdfs:subClassOf :AgencyExpression ,
+                                       :InteractionControl ,
+                                       [ owl:intersectionOf ( :BoundarySetting
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :supports ;
+                                                                owl:someValuesFrom :SocialProtection
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionMinimization
+:InteractionMinimization rdf:type owl:Class ;
+                         rdfs:subClassOf :AgencyExpression ,
+                                         :InteractionControl ;
+                         owl:disjointWith :SafetySeeking .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionRejection
+:InteractionRejection rdf:type owl:Class ;
+                      rdfs:subClassOf :BehavioralResponse ,
+                                      :InteractionControl ,
+                                      fn:Avoiding .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#IrritationResponse
+:IrritationResponse rdf:type owl:Class ;
+                    rdfs:subClassOf :BehavioralResponse ,
+                                    :EmotionalRegulation ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :influences ;
+                                      owl:someValuesFrom :InteractionAvoidance
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#IsolationSeeking
+:IsolationSeeking rdf:type owl:Class ;
+                  rdfs:subClassOf :BehavioralResponse ,
+                                  :SafetyManagement ,
+                                  [ owl:intersectionOf ( :SafetySeeking
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :requiresPresenceOf ;
+                                                           owl:someValuesFrom :EnvironmentalScanning
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#MentalProcessing
+:MentalProcessing rdf:type owl:Class ;
+                  rdfs:subClassOf fn:Mental_activity ,
+                                  fn:Mental_property ,
+                                  fn:Mental_stimulus_stimulus_focus ,
+                                  fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#MetaAwareness
+:MetaAwareness rdf:type owl:Class ;
+               rdfs:subClassOf :CognitiveAssessment ,
+                               :PresenceEngagement ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :supports ;
+                                 owl:someValuesFrom :SituationalAwareness
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#MinimalEngagement
+:MinimalEngagement rdf:type owl:Class ;
+                   rdfs:subClassOf :AgencyExpression ,
+                                   :InteractionControl .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ModerateDistress
+:ModerateDistress rdf:type owl:Class ;
+                  rdfs:subClassOf :EmotionalRegulation ,
+                                  [ owl:intersectionOf ( :EmotionalDistress
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :supports ;
+                                                           owl:someValuesFrom :ControlledResponse
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ModeratePresence
+:ModeratePresence rdf:type owl:Class ;
+                  rdfs:subClassOf :ImmersionQuality ,
+                                  :PresenceEngagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#NervousCoping
+:NervousCoping rdf:type owl:Class ;
+               rdfs:subClassOf :CopingStrategy ,
+                               :EmotionalRegulation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#NonResponse
+:NonResponse rdf:type owl:Class ;
+             rdfs:subClassOf :BehavioralResponse ,
+                             :InteractionControl ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :supports ;
+                               owl:someValuesFrom :CommunicationAvoidance
+                             ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PassiveDefense
+:PassiveDefense rdf:type owl:Class ;
+                rdfs:subClassOf :BehavioralResponse ,
+                                :SafetyManagement ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :requiresPresenceOf ;
+                                  owl:someValuesFrom :ThreatAnticipation
+                                ] ;
+                owl:disjointWith :SpatialStrategy .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PatternRecognition
+:PatternRecognition rdf:type owl:Class ;
+                    rdfs:subClassOf :CognitiveAssessment ,
+                                    :MentalProcessing ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :supports ;
+                                      owl:someValuesFrom :SituationalAwareness
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PerceptionAvoidance
+:PerceptionAvoidance rdf:type owl:Class ;
+                     rdfs:subClassOf :AttentionManagement ,
+                                     :CopingStrategy ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :influences ;
+                                       owl:someValuesFrom :PresenceEngagement
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PerceptualControl
+:PerceptualControl rdf:type owl:Class ;
+                   rdfs:subClassOf fn:Active_scanning ,
+                                   fn:Control ,
+                                   fn:Perception ,
+                                   fn:Self_control ,
+                                   fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PhysicalAvoidance
+:PhysicalAvoidance rdf:type owl:Class ;
+                   rdfs:subClassOf :BehavioralResponse ,
+                                   :SafetyManagement ,
+                                   [ owl:intersectionOf ( :SpatialStrategy
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty :requiresPresenceOf ;
+                                                            owl:someValuesFrom :EnvironmentalScanning
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PhysicalHiding
+:PhysicalHiding rdf:type owl:Class ;
+                rdfs:subClassOf :BehavioralResponse ,
+                                :SafetyManagement ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :precedesTypically ;
+                                  owl:someValuesFrom :EnvironmentalScanning
+                                ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PhysicalVulnerability
+:PhysicalVulnerability rdf:type owl:Class ;
+                       rdfs:subClassOf :EmotionalRegulation ,
+                                       :SafetyManagement ,
+                                       fn:Safety .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PoliteEngagement
+:PoliteEngagement rdf:type owl:Class ;
+                  rdfs:subClassOf :InteractionControl ,
+                                  :SocialPositioning ,
+                                  [ owl:intersectionOf ( :PolitenessStrategy
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :supports ;
+                                                           owl:someValuesFrom :SocialProtection
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+                  owl:disjointWith :TotalAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PolitenessRecognition
+:PolitenessRecognition rdf:type owl:Class ;
+                       rdfs:subClassOf :CognitiveAssessment ,
+                                       :SocialPositioning ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :influences ;
+                                         owl:someValuesFrom :InteractionControl
+                                       ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PolitenessStrategy
+:PolitenessStrategy rdf:type owl:Class ;
+                    rdfs:subClassOf :InteractionControl ,
+                                    :SocialPositioning ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :supports ;
+                                      owl:someValuesFrom :SocialProtection
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PresenceEngagement
+:PresenceEngagement rdf:type owl:Class ;
+                    rdfs:subClassOf fn:Awareness ,
+                                    fn:Experiencer_focus ,
+                                    fn:Mental_property ,
+                                    fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PresenceMaintenance
+:PresenceMaintenance rdf:type owl:Class ;
+                     rdfs:subClassOf :AgencyExpression ,
+                                     :PresenceEngagement ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :supports ;
+                                       owl:someValuesFrom :DeepPresence
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PreventiveAction
+:PreventiveAction rdf:type owl:Class ;
+                  rdfs:subClassOf :BehavioralResponse ,
+                                  :SafetyManagement ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :precedesTypically ;
+                                    owl:someValuesFrom :ThreatAnticipation
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ProgressiveDetachment
+:ProgressiveDetachment rdf:type owl:Class ;
+                       rdfs:subClassOf :CopingStrategy ,
+                                       :PresenceEngagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PsychologicalDistance
+:PsychologicalDistance rdf:type owl:Class ;
+                       rdfs:subClassOf :CopingStrategy ,
+                                       :EmotionalRegulation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#RepetitionAwareness
+:RepetitionAwareness rdf:type owl:Class ;
+                     rdfs:subClassOf :CognitiveAssessment ,
+                                     :MentalProcessing ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :influences ;
+                                       owl:someValuesFrom :InteractionControl
+                                     ] ;
+                     owl:disjointWith :TechnicalCuriosity .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ResponseEvolution
+:ResponseEvolution rdf:type owl:Class ;
+                   rdfs:subClassOf :AgencyExpression ,
+                                   :CognitiveAssessment ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :requiresPresenceOf ;
+                                     owl:someValuesFrom :SituationalAwareness
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :requiresPresenceOf ;
+                                     owl:someValuesFrom :TemporalShift
+                                   ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ResponseInability
+:ResponseInability rdf:type owl:Class ;
+                   rdfs:subClassOf :BehavioralResponse ,
+                                   :InteractionControl .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyAssessment
+:SafetyAssessment rdf:type owl:Class ;
+                  rdfs:subClassOf :CognitiveAssessment ,
+                                  :SafetyManagement ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :triggers ;
+                                    owl:someValuesFrom :SafetySeeking
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyCluster
+:SafetyCluster rdf:type owl:Class ;
+               owl:disjointWith :SocialCluster .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyConcern
+:SafetyConcern rdf:type owl:Class ;
+               rdfs:subClassOf :EmotionalRegulation ,
+                               :SafetyManagement ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :influences ;
+                                 owl:someValuesFrom :SafetySeeking
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyManagement
+:SafetyManagement rdf:type owl:Class ;
+                  rdfs:subClassOf fn:Active_scanning ,
+                                  fn:Avoiding ,
+                                  fn:Safety ,
+                                  fn:Self_control ,
+                                  fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetySeeking
+:SafetySeeking rdf:type owl:Class ;
+               owl:equivalentClass [ owl:intersectionOf ( :SafetyManagement
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty :requiresPresenceOf ;
+                                                            owl:someValuesFrom :EnvironmentalScanning
+                                                          ]
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty :triggers ;
+                                                            owl:someValuesFrom :SpatialStrategy
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] ;
+               rdfs:subClassOf :AgencyExpression ,
+                               :SafetyManagement ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :requiresPresenceOf ;
+                                 owl:someValuesFrom :EnvironmentalScanning
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :triggers ;
+                                 owl:someValuesFrom :SpatialStrategy
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SelfProtection
+:SelfProtection rdf:type owl:Class ;
+                rdfs:subClassOf :BehavioralResponse ,
+                                :SafetyManagement ,
+                                fn:Self_control .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SituationComfort
+:SituationComfort rdf:type owl:Class ;
+                  rdfs:subClassOf :EmotionalRegulation ,
+                                  :PresenceEngagement ,
+                                  [ owl:intersectionOf ( :EmotionalStability
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :supports ;
+                                                           owl:someValuesFrom :DeepPresence
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SituationalAwareness
+:SituationalAwareness rdf:type owl:Class ;
+                      rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SituationalPresence
+:SituationalPresence rdf:type owl:Class ;
+                     rdfs:subClassOf :PresenceEngagement ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :requiresPresenceOf ;
+                                       owl:someValuesFrom :SituationalAwareness
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialCluster
+:SocialCluster rdf:type owl:Class .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialDiscomfort
+:SocialDiscomfort rdf:type owl:Class ;
+                  rdfs:subClassOf :EmotionalRegulation ,
+                                  :SocialPositioning ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :triggers ;
+                                    owl:someValuesFrom :CopingStrategy
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialPositioning
+:SocialPositioning rdf:type owl:Class ;
+                   rdfs:subClassOf fn:Control ,
+                                   fn:Social_behavior_evaluation ,
+                                   fn:Social_interaction ,
+                                   fn:Social_interaction_evaluation ,
+                                   fschema:FrameOccurrence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialProtection
+:SocialProtection rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( :SafetyManagement
+                                                             :SocialPositioning
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty :requiresPresenceOf ;
+                                                               owl:someValuesFrom :BoundarySetting
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf :SafetyManagement ,
+                                  :SocialPositioning ,
+                                  [ owl:intersectionOf ( :BoundarySetting
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :requiresPresenceOf ;
+                                                           owl:someValuesFrom :SituationalAwareness
+                                                         ]
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :supports ;
+                                                           owl:someValuesFrom :InteractionControl
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SpaceManagement
+:SpaceManagement rdf:type owl:Class ;
+                 rdfs:subClassOf :AttentionManagement ,
+                                 :SafetyManagement ,
+                                 [ owl:intersectionOf ( :EnvironmentalScanning
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :supports ;
+                                                          owl:someValuesFrom :SpatialStrategy
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SpaceScanning
+:SpaceScanning rdf:type owl:Class ;
+               rdfs:subClassOf :AttentionManagement ,
+                               :SafetyManagement ,
+                               [ owl:intersectionOf ( :EnvironmentalScanning
+                                                      [ rdf:type owl:Restriction ;
+                                                        owl:onProperty :supports ;
+                                                        owl:someValuesFrom :SafetySeeking
+                                                      ]
+                                                    ) ;
+                                 rdf:type owl:Class
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SpatialStrategy
+:SpatialStrategy rdf:type owl:Class ;
+                 rdfs:subClassOf :AttentionManagement ,
+                                 :SafetyManagement ,
+                                 [ owl:intersectionOf ( :EnvironmentalScanning
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :requiresPresenceOf ;
+                                                          owl:someValuesFrom :SpaceManagement
+                                                        ]
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :supports ;
+                                                          owl:someValuesFrom :PhysicalAvoidance
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#StrategicPlanning
+:StrategicPlanning rdf:type owl:Class ;
+                   rdfs:subClassOf :AgencyExpression ,
+                                   :CognitiveAssessment ,
+                                   fn:Mental_activity .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#StrategicPoliteness
+:StrategicPoliteness rdf:type owl:Class ;
+                     rdfs:subClassOf :InteractionControl ,
+                                     :SocialPositioning ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :supports ;
+                                       owl:someValuesFrom :BoundarySetting
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#StrongPresence
+:StrongPresence rdf:type owl:Class ;
+                rdfs:subClassOf :ImmersionQuality ,
+                                :PresenceEngagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#TechnicalCuriosity
+:TechnicalCuriosity rdf:type owl:Class ;
+                    rdfs:subClassOf :AgencyExpression ,
+                                    :CognitiveAssessment .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#TemporalShift
+:TemporalShift rdf:type owl:Class ;
+               rdfs:subClassOf :CognitiveAssessment ,
+                               :EmotionalRegulation ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :influences ;
+                                 owl:someValuesFrom :ResponseEvolution
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ThreatAnticipation
+:ThreatAnticipation rdf:type owl:Class ;
+                    rdfs:subClassOf :CognitiveAssessment ,
+                                    :EmotionalRegulation ,
+                                    :SafetyManagement ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :influences ;
+                                      owl:someValuesFrom :EmotionalRegulation
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :requiresPresenceOf ;
+                                      owl:someValuesFrom :SituationalAwareness
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :triggers ;
+                                      owl:someValuesFrom :SafetySeeking
+                                    ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ThreatMonitoring
+:ThreatMonitoring rdf:type owl:Class ;
+                  rdfs:subClassOf :CognitiveAssessment ,
+                                  :SafetyManagement ,
+                                  [ owl:intersectionOf ( :SituationalAwareness
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :supports ;
+                                                           owl:someValuesFrom :SafetySeeking
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#TotalAvoidance
+:TotalAvoidance rdf:type owl:Class ;
+                rdfs:subClassOf :BehavioralResponse ,
+                                :InteractionControl ,
+                                [ owl:intersectionOf ( :CommunicationAvoidance
+                                                       [ rdf:type owl:Restriction ;
+                                                         owl:onProperty :triggers ;
+                                                         owl:someValuesFrom :ExperienceRejection
+                                                       ]
+                                                     ) ;
+                                  rdf:type owl:Class
+                                ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#UnfulfilledSecurity
+:UnfulfilledSecurity rdf:type owl:Class ;
+                     rdfs:subClassOf :EmotionalRegulation ,
+                                     :SafetyManagement ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :triggers ;
+                                       owl:someValuesFrom :SafetySeeking
+                                     ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#UnwantedAttention
+:UnwantedAttention rdf:type owl:Class ;
+                   rdfs:subClassOf :EmotionalRegulation ,
+                                   :SocialPositioning ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :triggers ;
+                                     owl:someValuesFrom :DiscomfortAwareness
+                                   ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#VariedStrategies
+:VariedStrategies rdf:type owl:Class ;
+                  rdfs:subClassOf :AgencyExpression ,
+                                  :BehavioralResponse ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :requiresPresenceOf ;
+                                    owl:someValuesFrom :SituationalAwareness
+                                  ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ViolenceFear
+:ViolenceFear rdf:type owl:Class ;
+              rdfs:subClassOf :EmotionalRegulation ,
+                              :SafetyManagement ,
+                              [ owl:intersectionOf ( :EmotionalDistress
+                                                     [ rdf:type owl:Restriction ;
+                                                       owl:onProperty :triggers ;
+                                                       owl:someValuesFrom :SafetySeeking
+                                                     ]
+                                                   ) ;
+                                rdf:type owl:Class
+                              ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#VolumeAwareness
+:VolumeAwareness rdf:type owl:Class ;
+                 rdfs:subClassOf :AttentionManagement ,
+                                 :CognitiveAssessment ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :influences ;
+                                   owl:someValuesFrom :SpaceManagement
+                                 ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#Vulnerability
+:Vulnerability rdf:type owl:Class ;
+               rdfs:subClassOf :SafetyManagement ,
+                               :SocialPositioning ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :triggers ;
+                                 owl:someValuesFrom :SafetySeeking
+                               ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#WaitingBehavior
+:WaitingBehavior rdf:type owl:Class ;
+                 rdfs:subClassOf :BehavioralResponse ,
+                                 :SafetyManagement ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :requiresPresenceOf ;
+                                   owl:someValuesFrom :SituationalAwareness
+                                 ] .
+
+
+###  http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#NaturalPerson
+dul:NaturalPerson rdf:type owl:Class .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Active_scanning
+fn:Active_scanning rdf:type owl:Class ;
+                   rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Avoiding
+fn:Avoiding rdf:type owl:Class ;
+            rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Awareness
+fn:Awareness rdf:type owl:Class ;
+             rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Behavioral_response
+fn:Behavioral_response rdf:type owl:Class ;
+                       rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Communication
+fn:Communication rdf:type owl:Class ;
+                 rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Control
+fn:Control rdf:type owl:Class ;
+           rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Emotion_active
+fn:Emotion_active rdf:type owl:Class ;
+                  rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Emotion_directed
+fn:Emotion_directed rdf:type owl:Class ;
+                    rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Experiencer_focus
+fn:Experiencer_focus rdf:type owl:Class ;
+                     rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Intentionally_act
+fn:Intentionally_act rdf:type owl:Class ;
+                     rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Mental_activity
+fn:Mental_activity rdf:type owl:Class ;
+                   rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Mental_property
+fn:Mental_property rdf:type owl:Class ;
+                   rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Mental_stimulus_stimulus_focus
+fn:Mental_stimulus_stimulus_focus rdf:type owl:Class ;
+                                  rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Perception
+fn:Perception rdf:type owl:Class ;
+              rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Personal_response
+fn:Personal_response rdf:type owl:Class ;
+                     rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Safety
+fn:Safety rdf:type owl:Class ;
+          rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Scrutiny
+fn:Scrutiny rdf:type owl:Class ;
+            rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Self_control
+fn:Self_control rdf:type owl:Class ;
+                rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Social_behavior_evaluation
+fn:Social_behavior_evaluation rdf:type owl:Class ;
+                              rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Social_interaction
+fn:Social_interaction rdf:type owl:Class ;
+                      rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Social_interaction_evaluation
+fn:Social_interaction_evaluation rdf:type owl:Class ;
+                                 rdfs:subClassOf fschema:FrameOccurrence .
+
+
+###  https://w3id.org/framester/schema/Frame
+fschema:Frame rdf:type owl:Class .
+
+
+###  https://w3id.org/framester/schema/FrameOccurrence
+fschema:FrameOccurrence rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ActionLimitation
+:ActionLimitation rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ActionPattern
+:ActionPattern rdf:type owl:NamedIndividual ,
+                        fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AgencyExpression
+:AgencyExpression rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AggressiveResponse
+:AggressiveResponse rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AngerDominance
+:AngerDominance rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AnxietyManagement
+:AnxietyManagement rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AttentionAwareness
+:AttentionAwareness rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AttentionManagement
+:AttentionManagement rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#AuthenticityAssessment
+:AuthenticityAssessment rdf:type owl:NamedIndividual ,
+                                 fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#BehavioralResponse
+:BehavioralResponse rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#BoundarySetting
+:BoundarySetting rdf:type owl:NamedIndividual ,
+                          fschema:Frame ;
+                 :supports :SocialProtection .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#BriefResponse
+:BriefResponse rdf:type owl:NamedIndividual ,
+                        fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CautiousCooperation
+:CautiousCooperation rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CognitiveAssessment
+:CognitiveAssessment rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CognitiveCluster
+:CognitiveCluster rdf:type owl:NamedIndividual ,
+                           :FrameCluster ;
+                  :hasComponent :AuthenticityAssessment ,
+                                :CognitiveAssessment ,
+                                :ComprehensionAssessment ,
+                                :ComprehensionBarrier ,
+                                :MentalProcessing ,
+                                :MetaAwareness ,
+                                :PatternRecognition ,
+                                :RepetitionAwareness ,
+                                :ResponseEvolution ,
+                                :SafetyAssessment ,
+                                :SituationalAwareness ,
+                                :StrategicPlanning ,
+                                :TechnicalCuriosity ,
+                                :TemporalShift ;
+                  :initiatesResponse :EmotionalCluster ,
+                                     :SafetyCluster .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CommunicationAvoidance
+:CommunicationAvoidance rdf:type owl:NamedIndividual ,
+                                 fschema:Frame ;
+                        :supports :InteractionAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ComprehensionAssessment
+:ComprehensionAssessment rdf:type owl:NamedIndividual ,
+                                  fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ComprehensionBarrier
+:ComprehensionBarrier rdf:type owl:NamedIndividual ,
+                               fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ControlledResponse
+:ControlledResponse rdf:type owl:NamedIndividual ,
+                             fschema:Frame ;
+                    :supports :BoundarySetting .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ConversationControl
+:ConversationControl rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CopingStrategy
+:CopingStrategy rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CrowdAvoidance
+:CrowdAvoidance rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#CuriosityShift
+:CuriosityShift rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#DeepPresence
+:DeepPresence rdf:type owl:NamedIndividual ,
+                       fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#DefensiveResponse
+:DefensiveResponse rdf:type owl:NamedIndividual .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#DiscomfortAwareness
+:DiscomfortAwareness rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalCluster
+:EmotionalCluster rdf:type owl:NamedIndividual ,
+                           :FrameCluster ;
+                  :clusteredInfluenceOn :SocialCluster ;
+                  :hasComponent :AngerDominance ,
+                                :BehavioralResponse ,
+                                :EmotionalDiscomfort ,
+                                :EmotionalDistress ,
+                                :EmotionalImmersion ,
+                                :EmotionalIntensity ,
+                                :EmotionalOutburst ,
+                                :EmotionalPresence ,
+                                :EmotionalReactivity ,
+                                :EmotionalRegulation ,
+                                :EmotionalRejection ,
+                                :EmotionalStability ,
+                                :ImmersionQuality ,
+                                :PresenceEngagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalDiscomfort
+:EmotionalDiscomfort rdf:type owl:NamedIndividual .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalDistress
+:EmotionalDistress rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalEvolution
+:EmotionalEvolution rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalImmersion
+:EmotionalImmersion rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalIntensity
+:EmotionalIntensity rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalOutburst
+:EmotionalOutburst rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalPresence
+:EmotionalPresence rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalReactivity
+:EmotionalReactivity rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalRegulation
+:EmotionalRegulation rdf:type owl:NamedIndividual ,
+                              fschema:Frame ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :influences ;
+                                owl:someValuesFrom [ rdf:type owl:Class ;
+                                                     owl:unionOf ( :BehavioralResponse
+                                                                   :PresenceEngagement
+                                                                 )
+                                                   ]
+                              ] ;
+                     :supports :ControlledResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalRejection
+:EmotionalRejection rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EmotionalStability
+:EmotionalStability rdf:type owl:NamedIndividual ,
+                             fschema:Frame ;
+                    :supports :DeepPresence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EngagementShift
+:EngagementShift rdf:type owl:NamedIndividual ,
+                          fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#EnvironmentalScanning
+:EnvironmentalScanning rdf:type owl:NamedIndividual ,
+                                fschema:Frame ;
+                       :supports :SpaceManagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperienceDistance
+:ExperienceDistance rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperienceQuality
+:ExperienceQuality rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperienceRejection
+:ExperienceRejection rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ExperientialLearning
+:ExperientialLearning rdf:type owl:NamedIndividual ,
+                               fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#FearResponse
+:FearResponse rdf:type owl:NamedIndividual ,
+                       fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#FrustrationManagement
+:FrustrationManagement rdf:type owl:NamedIndividual ,
+                                fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#GazeAvoidance
+:GazeAvoidance rdf:type owl:NamedIndividual ,
+                        fschema:Frame ;
+               :supports :CommunicationAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#GenderIdentity
+:GenderIdentity rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#HelpingDesire
+:HelpingDesire rdf:type owl:NamedIndividual .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#Hypervigilance
+:Hypervigilance rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#IdentityManagement
+:IdentityManagement rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ImmersionQuality
+:ImmersionQuality rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionAvoidance
+:InteractionAvoidance rdf:type owl:NamedIndividual ,
+                               fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionControl
+:InteractionControl rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionLimitation
+:InteractionLimitation rdf:type owl:NamedIndividual ,
+                                fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionMinimization
+:InteractionMinimization rdf:type owl:NamedIndividual ,
+                                  fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#InteractionRejection
+:InteractionRejection rdf:type owl:NamedIndividual .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#IrritationResponse
+:IrritationResponse rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#IsolationSeeking
+:IsolationSeeking rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#MentalProcessing
+:MentalProcessing rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#MetaAwareness
+:MetaAwareness rdf:type owl:NamedIndividual ,
+                        fschema:Frame ;
+               :supports :SituationalAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#MinimalEngagement
+:MinimalEngagement rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ModerateDistress
+:ModerateDistress rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ModeratePresence
+:ModeratePresence rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#NervousCoping
+:NervousCoping rdf:type owl:NamedIndividual ,
+                        fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#NonResponse
+:NonResponse rdf:type owl:NamedIndividual ,
+                      fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PassiveDefense
+:PassiveDefense rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PatternRecognition
+:PatternRecognition rdf:type owl:NamedIndividual ,
+                             fschema:Frame ;
+                    :supports :SituationalAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PerceptionAvoidance
+:PerceptionAvoidance rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PerceptualControl
+:PerceptualControl rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PhysicalAvoidance
+:PhysicalAvoidance rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PhysicalHiding
+:PhysicalHiding rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PhysicalVulnerability
+:PhysicalVulnerability rdf:type owl:NamedIndividual .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PoliteEngagement
+:PoliteEngagement rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PolitenessRecognition
+:PolitenessRecognition rdf:type owl:NamedIndividual ,
+                                fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PolitenessStrategy
+:PolitenessStrategy rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PresenceEngagement
+:PresenceEngagement rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PresenceMaintenance
+:PresenceMaintenance rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PreventiveAction
+:PreventiveAction rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ProgressiveDetachment
+:ProgressiveDetachment rdf:type owl:NamedIndividual ,
+                                fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#PsychologicalDistance
+:PsychologicalDistance rdf:type owl:NamedIndividual ,
+                                fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#RepetitionAwareness
+:RepetitionAwareness rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ResponseEvolution
+:ResponseEvolution rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ResponseInability
+:ResponseInability rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyAssessment
+:SafetyAssessment rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyCluster
+:SafetyCluster rdf:type owl:NamedIndividual ,
+                        :FrameCluster ;
+               :clusteredInfluenceOn :EmotionalCluster ;
+               :hasComponent :AttentionManagement ,
+                             :DefensiveResponse ,
+                             :PerceptualControl ,
+                             :PhysicalAvoidance ,
+                             :PhysicalHiding ,
+                             :PhysicalVulnerability ,
+                             :SafetyConcern ,
+                             :SafetyManagement ,
+                             :SafetySeeking ,
+                             :SelfProtection ,
+                             :ThreatAnticipation ,
+                             :ThreatMonitoring ,
+                             :UnfulfilledSecurity ,
+                             :ViolenceFear .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyConcern
+:SafetyConcern rdf:type owl:NamedIndividual ,
+                        fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetyManagement
+:SafetyManagement rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SafetySeeking
+:SafetySeeking rdf:type owl:NamedIndividual ,
+                        fschema:Frame ;
+               :supports :PhysicalAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SelfProtection
+:SelfProtection rdf:type owl:NamedIndividual .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SituationComfort
+:SituationComfort rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SituationalAwareness
+:SituationalAwareness rdf:type owl:NamedIndividual ,
+                               fschema:Frame ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :influences ;
+                                 owl:someValuesFrom [ rdf:type owl:Class ;
+                                                      owl:unionOf ( :InteractionControl
+                                                                    :SafetyManagement
+                                                                  )
+                                                    ]
+                               ] ;
+                      :supports :ThreatAnticipation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SituationalPresence
+:SituationalPresence rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialCluster
+:SocialCluster rdf:type owl:NamedIndividual ,
+                        :FrameCluster ;
+               :hasComponent :AgencyExpression ,
+                             :BoundarySetting ,
+                             :CautiousCooperation ,
+                             :GenderIdentity ,
+                             :HelpingDesire ,
+                             :InteractionAvoidance ,
+                             :InteractionControl ,
+                             :InteractionRejection ,
+                             :PolitenessStrategy ,
+                             :SocialDiscomfort ,
+                             :SocialPositioning ,
+                             :SocialProtection ,
+                             :StrategicPoliteness ,
+                             :UnwantedAttention .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialDiscomfort
+:SocialDiscomfort rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialPositioning
+:SocialPositioning rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SocialProtection
+:SocialProtection rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SpaceManagement
+:SpaceManagement rdf:type owl:NamedIndividual ,
+                          fschema:Frame ;
+                 :supports :SpatialStrategy .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SpaceScanning
+:SpaceScanning rdf:type owl:NamedIndividual ,
+                        fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#SpatialStrategy
+:SpatialStrategy rdf:type owl:NamedIndividual ,
+                          fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#StrategicPlanning
+:StrategicPlanning rdf:type owl:NamedIndividual .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#StrategicPoliteness
+:StrategicPoliteness rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#StrongPresence
+:StrongPresence rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#TechnicalCuriosity
+:TechnicalCuriosity rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#TemporalShift
+:TemporalShift rdf:type owl:NamedIndividual ,
+                        fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ThreatAnticipation
+:ThreatAnticipation rdf:type owl:NamedIndividual ,
+                             fschema:Frame ;
+                    :supports :SafetySeeking .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ThreatMonitoring
+:ThreatMonitoring rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#TotalAvoidance
+:TotalAvoidance rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#UnfulfilledSecurity
+:UnfulfilledSecurity rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#UnwantedAttention
+:UnwantedAttention rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#VariedStrategies
+:VariedStrategies rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#ViolenceFear
+:ViolenceFear rdf:type owl:NamedIndividual ,
+                       fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#VolumeAwareness
+:VolumeAwareness rdf:type owl:NamedIndividual ,
+                          fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#Vulnerability
+:Vulnerability rdf:type owl:NamedIndividual ,
+                        fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#WaitingBehavior
+:WaitingBehavior rdf:type owl:NamedIndividual ,
+                          fschema:Frame .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#actionLimitation_c17
+:actionLimitation_c17 rdf:type owl:NamedIndividual ,
+                               :ActionLimitation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#aggressiveResponse_e18
+:aggressiveResponse_e18 rdf:type owl:NamedIndividual ,
+                                 :AggressiveResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#angerDominance_e8
+:angerDominance_e8 rdf:type owl:NamedIndividual ,
+                            :AngerDominance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#anxietyManagement_c1
+:anxietyManagement_c1 rdf:type owl:NamedIndividual ,
+                               :AnxietyManagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#attentionAwareness_e7
+:attentionAwareness_e7 rdf:type owl:NamedIndividual ,
+                                :AttentionAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#authenticityAssessment_c3
+:authenticityAssessment_c3 rdf:type owl:NamedIndividual ,
+                                    :AuthenticityAssessment .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#balancedResponse_e12
+:balancedResponse_e12 rdf:type owl:NamedIndividual ,
+                               :BalancedResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#boundarySetting_c10
+:boundarySetting_c10 rdf:type owl:NamedIndividual ,
+                              :BoundarySetting .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#briefResponse_c14
+:briefResponse_c14 rdf:type owl:NamedIndividual ,
+                            :BriefResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#cautiousCooperation_c8
+:cautiousCooperation_c8 rdf:type owl:NamedIndividual ,
+                                 :CautiousCooperation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#communicationAvoidance_e6
+:communicationAvoidance_e6 rdf:type owl:NamedIndividual ,
+                                    :CommunicationAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#comprehensionAssessment_c15
+:comprehensionAssessment_c15 rdf:type owl:NamedIndividual ,
+                                      :ComprehensionAssessment .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#comprehensionBarrier_c4
+:comprehensionBarrier_c4 rdf:type owl:NamedIndividual ,
+                                  :ComprehensionBarrier .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#conversationControl_c14
+:conversationControl_c14 rdf:type owl:NamedIndividual ,
+                                  :ConversationControl .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#crowdAvoidance_e14
+:crowdAvoidance_e14 rdf:type owl:NamedIndividual ,
+                             :CrowdAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#curiosityShift_e13
+:curiosityShift_e13 rdf:type owl:NamedIndividual ,
+                             :CuriosityShift .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#deepPresence_c11
+:deepPresence_c11 rdf:type owl:NamedIndividual ,
+                           :DeepPresence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#deepPresence_c18
+:deepPresence_c18 rdf:type owl:NamedIndividual ,
+                           :DeepPresence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#deepPresence_e15
+:deepPresence_e15 rdf:type owl:NamedIndividual ,
+                           :DeepPresence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#defensiveResponse_e1
+:defensiveResponse_e1 rdf:type owl:NamedIndividual ,
+                               :DefensiveResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#discomfortAwareness_c16
+:discomfortAwareness_c16 rdf:type owl:NamedIndividual ,
+                                  :DiscomfortAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#emotionalDiscomfort_e7
+:emotionalDiscomfort_e7 rdf:type owl:NamedIndividual ,
+                                 :EmotionalDiscomfort .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#emotionalEvolution_c2
+:emotionalEvolution_c2 rdf:type owl:NamedIndividual ,
+                                :EmotionalEvolution .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#emotionalImmersion_e3
+:emotionalImmersion_e3 rdf:type owl:NamedIndividual ,
+                                :EmotionalImmersion .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#emotionalOutburst_e18
+:emotionalOutburst_e18 rdf:type owl:NamedIndividual ,
+                                :EmotionalOutburst .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#emotionalReactivity_e8
+:emotionalReactivity_e8 rdf:type owl:NamedIndividual ,
+                                 :EmotionalReactivity .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#emotionalRejection_e10
+:emotionalRejection_e10 rdf:type owl:NamedIndividual ,
+                                 :EmotionalRejection .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#emotionalStability_e17
+:emotionalStability_e17 rdf:type owl:NamedIndividual ,
+                                 :EmotionalStability .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#engagementShift_c15
+:engagementShift_c15 rdf:type owl:NamedIndividual ,
+                              :EngagementShift .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#environmentalScanning_e5
+:environmentalScanning_e5 rdf:type owl:NamedIndividual ,
+                                   :EnvironmentalScanning .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#experienceRejection_c5
+:experienceRejection_c5 rdf:type owl:NamedIndividual ,
+                                 :ExperienceRejection .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#experienceRejection_e18
+:experienceRejection_e18 rdf:type owl:NamedIndividual ,
+                                  :ExperienceRejection .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#experienceResistance_e10
+:experienceResistance_e10 rdf:type owl:NamedIndividual ,
+                                   :ExperienceResistance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#experientialLearning_e13
+:experientialLearning_e13 rdf:type owl:NamedIndividual ,
+                                   :ExperientialLearning .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#fearResponse_c12
+:fearResponse_c12 rdf:type owl:NamedIndividual ,
+                           :FearResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#frustrationManagement_c6
+:frustrationManagement_c6 rdf:type owl:NamedIndividual ,
+                                   :FrustrationManagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#gazeAvoidance_e3
+:gazeAvoidance_e3 rdf:type owl:NamedIndividual ,
+                           :GazeAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#genderIdentity_e1
+:genderIdentity_e1 rdf:type owl:NamedIndividual ,
+                            :GenderIdentity .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#helpingDesire_c17
+:helpingDesire_c17 rdf:type owl:NamedIndividual ,
+                            :HelpingDesire .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#hypervigilance_e5
+:hypervigilance_e5 rdf:type owl:NamedIndividual ,
+                            :Hypervigilance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#interactionAvoidance_c12
+:interactionAvoidance_c12 rdf:type owl:NamedIndividual ,
+                                   :InteractionAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#interactionLimitation_c6
+:interactionLimitation_c6 rdf:type owl:NamedIndividual ,
+                                   :InteractionLimitation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#interactionMinimization_c10
+:interactionMinimization_c10 rdf:type owl:NamedIndividual ,
+                                      :InteractionMinimization .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#interactionRejection_c3
+:interactionRejection_c3 rdf:type owl:NamedIndividual ,
+                                  :InteractionRejection .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#irritationResponse_c9
+:irritationResponse_c9 rdf:type owl:NamedIndividual ,
+                                :IrritationResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#isolationSeeking_e13
+:isolationSeeking_e13 rdf:type owl:NamedIndividual ,
+                               :IsolationSeeking .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#metaAwareness_c13
+:metaAwareness_c13 rdf:type owl:NamedIndividual ,
+                            :MetaAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#minimalEngagement_c4
+:minimalEngagement_c4 rdf:type owl:NamedIndividual ,
+                               :MinimalEngagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#minimalEngagement_e9
+:minimalEngagement_e9 rdf:type owl:NamedIndividual ,
+                               :MinimalEngagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#moderateDistress_e12
+:moderateDistress_e12 rdf:type owl:NamedIndividual ,
+                               :ModerateDistress .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#moderatePresence_c12
+:moderatePresence_c12 rdf:type owl:NamedIndividual ,
+                               :ModeratePresence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#nervousCoping_e4
+:nervousCoping_e4 rdf:type owl:NamedIndividual ,
+                           :NervousCoping .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#nonResponse_c16
+:nonResponse_c16 rdf:type owl:NamedIndividual ,
+                          :NonResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#nonResponse_c18
+:nonResponse_c18 rdf:type owl:NamedIndividual ,
+                          :NonResponse .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#passiveDefense_e3
+:passiveDefense_e3 rdf:type owl:NamedIndividual ,
+                            :PassiveDefense .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#patternRecognition_c8
+:patternRecognition_c8 rdf:type owl:NamedIndividual ,
+                                :PatternRecognition .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#perceptionAvoidance_c5
+:perceptionAvoidance_c5 rdf:type owl:NamedIndividual ,
+                                 :PerceptionAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#physicalAvoidance_c11
+:physicalAvoidance_c11 rdf:type owl:NamedIndividual ,
+                                :PhysicalAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#physicalHiding_c7
+:physicalHiding_c7 rdf:type owl:NamedIndividual ,
+                            :PhysicalHiding .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#physicalVulnerability_e2
+:physicalVulnerability_e2 rdf:type owl:NamedIndividual ,
+                                   :PhysicalVulnerability .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#politenessRecognition_c13
+:politenessRecognition_c13 rdf:type owl:NamedIndividual ,
+                                    :PolitenessRecognition .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#politenessStrategy_c10
+:politenessStrategy_c10 rdf:type owl:NamedIndividual ,
+                                 :PolitenessStrategy .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#presenceMaintenance_c16
+:presenceMaintenance_c16 rdf:type owl:NamedIndividual ,
+                                  :PresenceMaintenance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#preventiveAction_e9
+:preventiveAction_e9 rdf:type owl:NamedIndividual ,
+                              :PreventiveAction .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#progressiveDetachment_e4
+:progressiveDetachment_e4 rdf:type owl:NamedIndividual ,
+                                   :ProgressiveDetachment .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#psychologicalDistance_e15
+:psychologicalDistance_e15 rdf:type owl:NamedIndividual ,
+                                    :PsychologicalDistance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#repetitionAwareness_c9
+:repetitionAwareness_c9 rdf:type owl:NamedIndividual ,
+                                 :RepetitionAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#responseEvolution_c15
+:responseEvolution_c15 rdf:type owl:NamedIndividual ,
+                                :ResponseEvolution .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#responseInability_c6
+:responseInability_c6 rdf:type owl:NamedIndividual ,
+                               :ResponseInability .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#safetyAssessment_e2
+:safetyAssessment_e2 rdf:type owl:NamedIndividual ,
+                              :SafetyAssessment .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#safetyConcern_e12
+:safetyConcern_e12 rdf:type owl:NamedIndividual ,
+                            :SafetyConcern .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#safetySeeking_c7
+:safetySeeking_c7 rdf:type owl:NamedIndividual ,
+                           :SafetySeeking .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#safetySeeking_e15
+:safetySeeking_e15 rdf:type owl:NamedIndividual ,
+                            :SafetySeeking .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#safetySeeking_e16
+:safetySeeking_e16 rdf:type owl:NamedIndividual ,
+                            :SafetySeeking .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#selfProtection_e6
+:selfProtection_e6 rdf:type owl:NamedIndividual ,
+                            :SelfProtection .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#situationComfort_e17
+:situationComfort_e17 rdf:type owl:NamedIndividual ,
+                               :SituationComfort .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#situationalAwareness_c2
+:situationalAwareness_c2 rdf:type owl:NamedIndividual ,
+                                  :SituationalAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#situationalAwareness_e4
+:situationalAwareness_e4 rdf:type owl:NamedIndividual ,
+                                  :SituationalAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#situationalPresence_e8
+:situationalPresence_e8 rdf:type owl:NamedIndividual ,
+                                 :SituationalPresence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#socialDiscomfort_e11
+:socialDiscomfort_e11 rdf:type owl:NamedIndividual ,
+                               :SocialDiscomfort .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#socialProtection_c1
+:socialProtection_c1 rdf:type owl:NamedIndividual ,
+                              :SocialProtection .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#spaceManagement_c5
+:spaceManagement_c5 rdf:type owl:NamedIndividual ,
+                             :SpaceManagement .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#spaceScanning_e16
+:spaceScanning_e16 rdf:type owl:NamedIndividual ,
+                            :SpaceScanning .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#spatialStrategy_e11
+:spatialStrategy_e11 rdf:type owl:NamedIndividual ,
+                              :SpatialStrategy .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#spatialStrategy_e14
+:spatialStrategy_e14 rdf:type owl:NamedIndividual ,
+                              :SpatialStrategy .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#strategicPlanning_e2
+:strategicPlanning_e2 rdf:type owl:NamedIndividual ,
+                               :StrategicPlanning .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#strategicPoliteness_c1
+:strategicPoliteness_c1 rdf:type owl:NamedIndividual ,
+                                 :StrategicPoliteness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#strongPresence_c3
+:strongPresence_c3 rdf:type owl:NamedIndividual ,
+                            :StrongPresence .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c1
+:subject_c1 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :anxietyManagement_c1 ,
+                            :socialProtection_c1 ,
+                            :strategicPoliteness_c1 ;
+            :verbalReport "I tried to respond while remaining cordial, even though there was some anxiety, because despite the possible danger I feel more comfortable showing kindness and treating others with respect, also because I think that a bad response or attitude makes you more exposed to bad external eventualities"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c10
+:subject_c10 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :boundarySetting_c10 ,
+                             :interactionMinimization_c10 ,
+                             :politenessStrategy_c10 ;
+             :verbalReport "I responded in a polite and curt manner, with the desire not to continue the conversation. I wouldn't have wanted to talk to them"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c11
+:subject_c11 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :deepPresence_c11 ,
+                             :physicalAvoidance_c11 ,
+                             :violenceFear_c11 ;
+             :verbalReport "Since I was very afraid of being subjected to violence or harassment, I moved away avoiding any physical or verbal contact"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c12
+:subject_c12 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :fearResponse_c12 ,
+                             :interactionAvoidance_c12 ,
+                             :moderatePresence_c12 ;
+             :verbalReport "I moved away because I didn't want to have any kind of interaction with them"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c13
+:subject_c13 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :metaAwareness_c13 ,
+                             :politenessRecognition_c13 ,
+                             :technicalCuriosity_c13 ;
+             :verbalReport "I had the instinct to respond to the questions that were asked of me, the avatars asked the questions in a fairly polite way and I approached all three to hear what questions they had been programmed with"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c14
+:subject_c14 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :briefResponse_c14 ,
+                             :conversationControl_c14 ;
+             :verbalReport "I tried to respond briefly without showing too much pleasure in prolonging the conversation"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c15
+:subject_c15 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :comprehensionAssessment_c15 ,
+                             :engagementShift_c15 ,
+                             :responseEvolution_c15 ;
+             :verbalReport "I initially felt the need to respond, I then had the impression that the response would not have been understood by the avatars, so I did not respond"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c16
+:subject_c16 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :discomfortAwareness_c16 ,
+                             :nonResponse_c16 ,
+                             :presenceMaintenance_c16 ;
+             :verbalReport "I felt a bit uncomfortable because the questions were a bit insistent but I didn't respond"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c17
+:subject_c17 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :actionLimitation_c17 ,
+                             :helpingDesire_c17 ;
+             :verbalReport "I WAITED TO RESPOND BECAUSE I WANTED TO HELP THEM BUT I COULDN'T"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c18
+:subject_c18 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :deepPresence_c18 ,
+                             :nonResponse_c18 ;
+             :verbalReport "I did not respond"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c2
+:subject_c2 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :emotionalEvolution_c2 ,
+                            :situationalAwareness_c2 ,
+                            :temporalShift_c2 ;
+            :verbalReport "I responded calmly based on my knowledge at that moment, however during the scene with the male avatars I had a bad feeling at first"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c3
+:subject_c3 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :authenticityAssessment_c3 ,
+                            :interactionRejection_c3 ,
+                            :strongPresence_c3 ;
+            :verbalReport "I ignored the avatars' responses because they were insincere"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c4
+:subject_c4 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :comprehensionBarrier_c4 ,
+                            :minimalEngagement_c4 ;
+            :verbalReport "I did not respond since I was not aware of the answer they addressed to me"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c5
+:subject_c5 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :experienceRejection_c5 ,
+                            :perceptionAvoidance_c5 ,
+                            :spaceManagement_c5 ;
+            :verbalReport "I tried to move away from them in an attempt to get out of their perception area"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c6
+:subject_c6 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :frustrationManagement_c6 ,
+                            :interactionLimitation_c6 ,
+                            :responseInability_c6 ;
+            :verbalReport "I ignored them. I knew and felt I had no way to answer their questions. I felt very annoyed by the insistence"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c7
+:subject_c7 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :physicalHiding_c7 ,
+                            :safetySeeking_c7 ,
+                            :variedStrategies_c7 ;
+            :verbalReport "I didn't respond to two and went away and to one I said no, then I got behind an advertising billboard away from them"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c8
+:subject_c8 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :cautiousCooperation_c8 ,
+                            :patternRecognition_c8 ,
+                            :threatMonitoring_c8 ;
+            :verbalReport "I responded by giving the requested information, but with the feeling that something could happen at any moment. The feeling was actually suppressed when I realized they were cyclically repeating a movement and a question. But the idea that something was about to happen remained constant"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_c9
+:subject_c9 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :irritationResponse_c9 ,
+                            :repetitionAwareness_c9 ;
+            :verbalReport "They irritated me because of the repetitiveness"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e1
+:subject_e1 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :defensiveResponse_e1 ,
+                            :genderIdentity_e1 ,
+                            :vulnerability_e1 ;
+            :verbalReport "I moved away because I was a woman, if I had been a man I would have responded"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e10
+:subject_e10 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :emotionalRejection_e10 ,
+                             :experienceResistance_e10 ,
+                             :totalAvoidance_e10 ;
+             :verbalReport "I ran away because I didn't want to have anything to do with it"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e11
+:subject_e11 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :socialDiscomfort_e11 ,
+                             :spatialStrategy_e11 ,
+                             :waitingBehavior_e11 ;
+             :verbalReport "I moved away from all other avatars and waited impatiently for the train, because the people, their comments and insistence made me uncomfortable"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e12
+:subject_e12 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :balancedResponse_e12 ,
+                             :moderateDistress_e12 ,
+                             :safetyConcern_e12 ;
+             :verbalReport "I moved away from them because I felt decidedly uncomfortable and unsafe"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e13
+:subject_e13 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :curiosityShift_e13 ,
+                             :experientialLearning_e13 ,
+                             :isolationSeeking_e13 ;
+             :verbalReport "I had the sensation I needed to move away, although initially, intrigued by the VR experience, I approached the avatars. For the rest of the experiment, while waiting for the metro, I felt the need to isolate myself and wait for the train away from the other avatars"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e14
+:subject_e14 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :crowdAvoidance_e14 ,
+                             :spatialStrategy_e14 ,
+                             :volumeAwareness_e14 ;
+             :verbalReport "I moved to the point on the platform that had less crowding of people, to hear their words at minimum volume"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e15
+:subject_e15 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :deepPresence_e15 ,
+                             :psychologicalDistance_e15 ,
+                             :safetySeeking_e15 ;
+             :verbalReport "My behavior to the avatars' questions was to ignore them because it helped me perceive them as more distant and therefore make me feel safer"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e16
+:subject_e16 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :safetySeeking_e16 ,
+                             :spaceScanning_e16 ,
+                             :unfulfilledSecurity_e16 ;
+             :verbalReport "I didn't have the instinct to respond but rather to move away and look for a safe space that I didn't find"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e17
+:subject_e17 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :emotionalStability_e17 ,
+                             :situationComfort_e17 ;
+             :verbalReport "In a calm and serene way"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e18
+:subject_e18 rdf:type owl:NamedIndividual ,
+                      dul:NaturalPerson ;
+             :reportsEvoking :aggressiveResponse_e18 ,
+                             :emotionalOutburst_e18 ,
+                             :experienceRejection_e18 ;
+             :verbalReport "I reacted in a confrontational way and responded with heavy insults"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e2
+:subject_e2 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :physicalVulnerability_e2 ,
+                            :safetyAssessment_e2 ,
+                            :strategicPlanning_e2 ;
+            :verbalReport "I felt unsafe, I felt the need to move to an area where I could be alone, but then I realized this would only put me in more danger and in a condition of vulnerability in the eyes of those individuals, so I decided to move forward, but still the sensation was physically and perceptually unpleasant"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e3
+:subject_e3 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :emotionalImmersion_e3 ,
+                            :gazeAvoidance_e3 ,
+                            :passiveDefense_e3 ;
+            :verbalReport "I remained in complete silence, I tried to avoid them while waiting for the train. I tried not to meet their gaze, although it was complicated for me"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e4
+:subject_e4 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :nervousCoping_e4 ,
+                            :progressiveDetachment_e4 ,
+                            :situationalAwareness_e4 ;
+            :verbalReport "Initially with a 'hysterical' laugh aware of being in a situation that could happen, subsequently trying to avoid voices with indifference, voices that were increasingly insistent"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e5
+:subject_e5 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :environmentalScanning_e5 ,
+                            :hypervigilance_e5 ;
+            :verbalReport "I waited looking around"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e6
+:subject_e6 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :communicationAvoidance_e6 ,
+                            :selfProtection_e6 ,
+                            :threatAnticipation_e6 ;
+            :verbalReport "Moving away and not responding to their questions for fear of possible aggression towards me"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e7
+:subject_e7 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :attentionAwareness_e7 ,
+                            :emotionalDiscomfort_e7 ,
+                            :unwantedAttention_e7 ;
+            :verbalReport "I felt uneasy hearing these phrases without wanting to receive attention from the avatars"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e8
+:subject_e8 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :angerDominance_e8 ,
+                            :emotionalReactivity_e8 ,
+                            :situationalPresence_e8 ;
+            :verbalReport "A feeling of anger developed in me"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#subject_e9
+:subject_e9 rdf:type owl:NamedIndividual ,
+                     dul:NaturalPerson ;
+            :reportsEvoking :minimalEngagement_e9 ,
+                            :preventiveAction_e9 ;
+            :verbalReport "I moved away to avoid trouble"@en .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#technicalCuriosity_c13
+:technicalCuriosity_c13 rdf:type owl:NamedIndividual ,
+                                 :TechnicalCuriosity .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#temporalShift_c2
+:temporalShift_c2 rdf:type owl:NamedIndividual ,
+                           :TemporalShift .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#threatAnticipation_e6
+:threatAnticipation_e6 rdf:type owl:NamedIndividual ,
+                                :ThreatAnticipation .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#threatMonitoring_c8
+:threatMonitoring_c8 rdf:type owl:NamedIndividual ,
+                              :ThreatMonitoring .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#totalAvoidance_e10
+:totalAvoidance_e10 rdf:type owl:NamedIndividual ,
+                             :TotalAvoidance .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#unfulfilledSecurity_e16
+:unfulfilledSecurity_e16 rdf:type owl:NamedIndividual ,
+                                  :UnfulfilledSecurity .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#unwantedAttention_e7
+:unwantedAttention_e7 rdf:type owl:NamedIndividual ,
+                               :UnwantedAttention .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#variedStrategies_c7
+:variedStrategies_c7 rdf:type owl:NamedIndividual ,
+                              :VariedStrategies .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#violenceFear_c11
+:violenceFear_c11 rdf:type owl:NamedIndividual ,
+                           :ViolenceFear .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#volumeAwareness_e14
+:volumeAwareness_e14 rdf:type owl:NamedIndividual ,
+                              :VolumeAwareness .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#vulnerability_e1
+:vulnerability_e1 rdf:type owl:NamedIndividual ,
+                           :Vulnerability .
+
+
+###  http://www.ontologydesignpatterns.org/ont/cog/catcalling.owl#waitingBehavior_e11
+:waitingBehavior_e11 rdf:type owl:NamedIndividual ,
+                              :WaitingBehavior .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Active_scanning
+fn:Active_scanning rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Avoiding
+fn:Avoiding rdf:type owl:NamedIndividual ,
+                     fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Awareness
+fn:Awareness rdf:type owl:NamedIndividual ,
+                      fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Behavioral_response
+fn:Behavioral_response rdf:type owl:NamedIndividual ,
+                                fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Communication
+fn:Communication rdf:type owl:NamedIndividual ,
+                          fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Control
+fn:Control rdf:type owl:NamedIndividual ,
+                    fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Emotion_active
+fn:Emotion_active rdf:type owl:NamedIndividual ,
+                           fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Emotion_directed
+fn:Emotion_directed rdf:type owl:NamedIndividual ,
+                             fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Experiencer_focus
+fn:Experiencer_focus rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Intentionally_act
+fn:Intentionally_act rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Mental_activity
+fn:Mental_activity rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Mental_property
+fn:Mental_property rdf:type owl:NamedIndividual ,
+                            fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Mental_stimulus_stimulus_focus
+fn:Mental_stimulus_stimulus_focus rdf:type owl:NamedIndividual ,
+                                           fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Perception
+fn:Perception rdf:type owl:NamedIndividual ,
+                       fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Personal_response
+fn:Personal_response rdf:type owl:NamedIndividual ,
+                              fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Safety
+fn:Safety rdf:type owl:NamedIndividual ,
+                   fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Scrutiny
+fn:Scrutiny rdf:type owl:NamedIndividual ,
+                     fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Self_control
+fn:Self_control rdf:type owl:NamedIndividual ,
+                         fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Social_behavior_evaluation
+fn:Social_behavior_evaluation rdf:type owl:NamedIndividual ,
+                                       fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Social_interaction
+fn:Social_interaction rdf:type owl:NamedIndividual ,
+                               fschema:Frame .
+
+
+###  https://w3id.org/framester/framenet/abox/frame/Social_interaction_evaluation
+fn:Social_interaction_evaluation rdf:type owl:NamedIndividual ,
+                                          fschema:Frame .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+:ActionLimitation rdfs:comment "Constraints on possible responses due to situational or personal factors"@en ;
+                  rdfs:label "Action Limitation"@en .
+
+
+:ActionPattern rdfs:comment "A repeatable behavioral sequence that emerges in response to cat calling"@en ;
+               rdfs:label "Action Pattern"@en .
+
+
+:AgencyExpression rdfs:comment "Ways in which individuals assert control or intentionality in response to cat calling"@en ;
+                  rdfs:label "Agency Expression"@en .
+
+
+:AggressiveResponse rdfs:comment "Hostile or confrontational reaction to cat calling behavior"@en ;
+                    rdfs:label "Aggressive Response"@en .
+
+
+:AngerDominance rdfs:comment "State where anger becomes the primary emotional response overriding other emotions"@en ;
+                rdfs:label "Anger Dominance"@en .
+
+
+:AnxietyManagement rdfs:comment "Techniques used to control and reduce anxiety during cat calling encounters"@en ;
+                   rdfs:label "Anxiety Management"@en .
+
+
+:AttentionAwareness rdfs:comment "Conscious monitoring of where and how attention is directed"@en ;
+                    rdfs:label "Attention Awareness"@en .
+
+
+:AttentionManagement rdfs:comment "Strategies for directing and controlling attention during cat calling incidents"@en ;
+                     rdfs:label "Attention Management"@en .
+
+
+:AuthenticityAssessment rdfs:comment "Evaluation of the genuineness of interactions and intentions in cat calling situations"@en ;
+                        rdfs:label "Authenticity Assessment"@en .
+
+
+:BehavioralResponse rdfs:comment "Observable actions taken in response to cat calling"@en ;
+                    rdfs:label "Behavioral Response"@en .
+
+
+:BoundarySetting rdfs:comment "Establishing and maintaining personal limits in social interactions"@en ;
+                 rdfs:label "Boundary Setting"@en .
+
+
+:BriefResponse rdfs:comment "Short, minimal verbal or non-verbal reaction to minimize interaction"@en ;
+               rdfs:label "Brief Response"@en .
+
+
+:CautiousCooperation rdfs:comment "Limited engagement while maintaining defensive awareness"@en ;
+                     rdfs:label "Cautious Cooperation"@en .
+
+
+:CognitiveAssessment rdfs:comment "Mental processes of evaluating and understanding cat calling situations"@en ;
+                     rdfs:label "Cognitive Assessment"@en .
+
+
+:CognitiveCluster rdfs:comment "A cluster of frames related to mental processing, assessment, and cognitive strategies"@en ;
+                  rdfs:label "Cognitive Cluster"@en .
+
+
+:CommunicationAvoidance rdfs:comment "Active prevention of verbal or non-verbal interaction"@en ;
+                        rdfs:label "Communication Avoidance"@en .
+
+
+:ComprehensionAssessment rdfs:comment "Evaluation of one's understanding of the situation and its implications"@en ;
+                         rdfs:label "Comprehension Assessment"@en .
+
+
+:ComprehensionBarrier rdfs:comment "Inability to fully understand or process aspects of the situation"@en ;
+                      rdfs:label "Comprehension Barrier"@en .
+
+
+:ControlledResponse rdfs:comment "Deliberate, measured reaction maintaining emotional regulation"@en ;
+                    rdfs:label "Controlled Response"@en .
+
+
+:ConversationControl rdfs:comment "Managing and directing the flow of verbal interaction"@en ;
+                     rdfs:label "Conversation Control"@en .
+
+
+:CopingStrategy rdfs:comment "Methods employed to handle psychological stress from cat calling"@en ;
+                rdfs:label "Coping Strategy"@en .
+
+
+:CrowdAvoidance rdfs:comment "Strategic movement away from groups or gatherings"@en ;
+                rdfs:label "Crowd Avoidance"@en .
+
+
+:CuriosityShift rdfs:comment "Change in attention from threat to interest in understanding the situation"@en ;
+                rdfs:label "Curiosity Shift"@en .
+
+
+:DeepPresence rdfs:comment "Strong sense of being immersed in the current situation"@en ;
+              rdfs:label "Deep Presence"@en .
+
+
+:DefensiveResponse rdfs:comment "A protective behavioral reaction aimed at maintaining safety when facing perceived threats"@en ;
+                   rdfs:label "Defensive Response"@en .
+
+
+:DiscomfortAwareness rdfs:comment "Recognition of personal unease or distress"@en ;
+                     rdfs:label "Discomfort Awareness"@en .
+
+
+:EmotionalCluster rdfs:comment "A cluster of frames related to emotional responses, regulation, and affective states"@en ;
+                  rdfs:label "Emotional Cluster"@en .
+
+
+:EmotionalDiscomfort rdfs:comment "A state of unease or distress in response to unwanted social interactions"@en ;
+                     rdfs:label "Emotional Discomfort"@en .
+
+
+:EmotionalDistress rdfs:comment "Significant negative emotional state triggered by harassment"@en ;
+                   rdfs:label "Emotional Distress"@en .
+
+
+:EmotionalEvolution rdfs:comment "Progressive change in emotional state throughout the encounter"@en ;
+                    rdfs:label "Emotional Evolution"@en .
+
+
+:EmotionalImmersion rdfs:comment "Deep emotional engagement with the cat calling situation affecting overall experience quality"@en ;
+                    rdfs:label "Emotional Immersion"@en .
+
+
+:EmotionalIntensity rdfs:comment "Strength or magnitude of emotional response"@en ;
+                    rdfs:label "Emotional Intensity"@en .
+
+
+:EmotionalOutburst rdfs:comment "Sudden, intense expression of emotion"@en ;
+                   rdfs:label "Emotional Outburst"@en .
+
+
+:EmotionalPresence rdfs:comment "Degree of emotional engagement with the current situation"@en ;
+                   rdfs:label "Emotional Presence"@en .
+
+
+:EmotionalReactivity rdfs:comment "Tendency to respond emotionally to harassment stimuli"@en ;
+                     rdfs:label "Emotional Reactivity"@en .
+
+
+:EmotionalRegulation rdfs:comment "Process of managing and modulating emotional responses to cat calling"@en ;
+                     rdfs:label "Emotional Regulation"@en .
+
+
+:EmotionalRejection rdfs:comment "Active resistance to emotional engagement with the situation"@en ;
+                    rdfs:label "Emotional Rejection"@en .
+
+
+:EmotionalStability rdfs:comment "Maintenance of balanced emotional state despite provocation"@en ;
+                    rdfs:label "Emotional Stability"@en .
+
+
+:EngagementShift rdfs:comment "Change in level or type of involvement with the situation"@en ;
+                 rdfs:label "Engagement Shift"@en .
+
+
+:EnvironmentalScanning rdfs:comment "Active monitoring of surroundings for threats or escape routes"@en ;
+                       rdfs:label "Environmental Scanning"@en .
+
+
+:ExperienceDistance rdfs:comment "Psychological separation from immediate experience"@en ;
+                    rdfs:label "Experience Distance"@en .
+
+
+:ExperienceQuality rdfs:comment "Nature and characteristics of the subjective experience"@en ;
+                   rdfs:label "Experience Quality"@en .
+
+
+:ExperienceRejection rdfs:comment "Active resistance to engaging with the harassing situation"@en ;
+                     rdfs:label "Experience Rejection"@en .
+
+
+:ExperientialLearning rdfs:comment "Gaining understanding through direct experience of harassment"@en ;
+                      rdfs:label "Experiential Learning"@en .
+
+
+:FearResponse rdfs:comment "Reaction driven by fear or anxiety"@en ;
+              rdfs:label "Fear Response"@en .
+
+
+:FrustrationManagement rdfs:comment "Controlling and coping with feelings of frustration"@en ;
+                       rdfs:label "Frustration Management"@en .
+
+
+:GazeAvoidance rdfs:comment "Intentional prevention of eye contact or visual interaction"@en ;
+               rdfs:label "Gaze Avoidance"@en .
+
+
+:GenderIdentity rdfs:comment "Awareness of gender's role in the harassment experience"@en ;
+                rdfs:label "Gender Identity"@en .
+
+
+:HelpingDesire rdfs:comment "A prosocial motivation to assist or support others despite challenging circumstances"@en ;
+               rdfs:label "Helping Desire"@en .
+
+
+:Hypervigilance rdfs:comment "Heightened state of awareness and alertness to potential threats"@en ;
+                rdfs:label "Hypervigilance"@en .
+
+
+:IdentityManagement rdfs:comment "Ways of maintaining and protecting personal identity during cat calling encounters"@en ;
+                    rdfs:label "Identity Management"@en .
+
+
+:ImmersionQuality rdfs:comment "Degree of psychological involvement in the cat calling situation"@en ;
+                  rdfs:label "Immersion Quality"@en .
+
+
+:InteractionAvoidance rdfs:comment "Active prevention of any form of social interaction"@en ;
+                      rdfs:label "Interaction Avoidance"@en .
+
+
+:InteractionControl rdfs:comment "Management and regulation of social interactions during cat calling incidents"@en ;
+                    rdfs:label "Interaction Control"@en .
+
+
+:InteractionLimitation rdfs:comment "Controlled restriction of social engagement levels"@en ;
+                       rdfs:label "Interaction Limitation"@en .
+
+
+:InteractionMinimization rdfs:comment "Reducing social interaction to the lowest possible level"@en ;
+                         rdfs:label "Interaction Minimization"@en .
+
+
+:InteractionRejection rdfs:comment "Explicit refusal to engage in social interaction when approached"@en ;
+                      rdfs:label "Interaction Rejection"@en .
+
+
+:IrritationResponse rdfs:comment "Reaction characterized by annoyance or irritation"@en ;
+                    rdfs:label "Irritation Response"@en .
+
+
+:IsolationSeeking rdfs:comment "Active attempt to find physical or social separation from others"@en ;
+                  rdfs:label "Isolation Seeking"@en .
+
+
+:MentalProcessing rdfs:comment "Cognitive operations involved in understanding and responding to cat calling situations"@en ;
+                  rdfs:label "Mental Processing"@en .
+
+
+:MetaAwareness rdfs:comment "Consciousness of one's own awareness and reactions"@en ;
+               rdfs:label "Meta Awareness"@en .
+
+
+:MinimalEngagement rdfs:comment "Maintaining the lowest possible level of interaction while present"@en ;
+                   rdfs:label "Minimal Engagement"@en .
+
+
+:ModerateDistress rdfs:comment "Controlled level of emotional discomfort or anxiety"@en ;
+                  rdfs:label "Moderate Distress"@en .
+
+
+:ModeratePresence rdfs:comment "Balanced level of psychological presence in the situation"@en ;
+                  rdfs:label "Moderate Presence"@en .
+
+
+:NervousCoping rdfs:comment "Managing anxiety through nervous behaviors or reactions"@en ;
+               rdfs:label "Nervous Coping"@en .
+
+
+:NonResponse rdfs:comment "Complete absence of visible or audible reaction"@en ;
+             rdfs:label "Non Response"@en .
+
+
+:PassiveDefense rdfs:comment "Non-confrontational protective behaviors"@en ;
+                rdfs:label "Passive Defense"@en .
+
+
+:PatternRecognition rdfs:comment "Identification of recurring elements in harassment situations"@en ;
+                    rdfs:label "Pattern Recognition"@en .
+
+
+:PerceptionAvoidance rdfs:comment "Attempting to limit awareness of threatening stimuli"@en ;
+                     rdfs:label "Perception Avoidance"@en .
+
+
+:PerceptualControl rdfs:comment "Managing how one perceives and processes situational elements"@en ;
+                   rdfs:label "Perceptual Control"@en .
+
+
+:PhysicalAvoidance rdfs:comment "Bodily movement away from perceived threats"@en ;
+                   rdfs:label "Physical Avoidance"@en .
+
+
+:PhysicalHiding rdfs:comment "Using physical objects or space for concealment"@en ;
+                rdfs:label "Physical Hiding"@en .
+
+
+:PhysicalVulnerability rdfs:comment "Awareness of bodily exposure to potential harm in threatening situations"@en ;
+                       rdfs:label "Physical Vulnerability"@en .
+
+
+:PoliteEngagement rdfs:comment "Maintaining civility despite harassment"@en ;
+                  rdfs:label "Polite Engagement"@en .
+
+
+:PolitenessRecognition rdfs:comment "Awareness of social courtesy norms in hostile situations"@en ;
+                       rdfs:label "Politeness Recognition"@en .
+
+
+:PolitenessStrategy rdfs:comment "Using courtesy as a defensive mechanism"@en ;
+                    rdfs:label "Politeness Strategy"@en .
+
+
+:PresenceEngagement rdfs:comment "Level and quality of psychological involvement in the cat calling situation"@en ;
+                    rdfs:label "Presence Engagement"@en .
+
+
+:PresenceMaintenance rdfs:comment "Sustaining psychological presence despite discomfort"@en ;
+                     rdfs:label "Presence Maintenance"@en .
+
+
+:PreventiveAction rdfs:comment "Proactive measures to avoid or minimize harassment"@en ;
+                  rdfs:label "Preventive Action"@en .
+
+
+:ProgressiveDetachment rdfs:comment "Gradual psychological disconnection from the situation"@en ;
+                       rdfs:label "Progressive Detachment"@en .
+
+
+:PsychologicalDistance rdfs:comment "Mental separation from immediate emotional experience"@en ;
+                       rdfs:label "Psychological Distance"@en .
+
+
+:RepetitionAwareness rdfs:comment "Recognition of recurring patterns in harassment"@en ;
+                     rdfs:label "Repetition Awareness"@en .
+
+
+:ResponseEvolution rdfs:comment "Development or change in response patterns over time"@en ;
+                   rdfs:label "Response Evolution"@en .
+
+
+:ResponseInability rdfs:comment "Inability to formulate or execute desired responses"@en ;
+                   rdfs:label "Response Inability"@en .
+
+
+:SafetyAssessment rdfs:comment "Evaluation of personal security in the situation"@en ;
+                  rdfs:label "Safety Assessment"@en .
+
+
+:SafetyCluster rdfs:comment "A cluster of frames related to safety management, threat avoidance, and protective behaviors"@en ;
+               rdfs:label "Safety Cluster"@en .
+
+
+:SafetyConcern rdfs:comment "Worry or anxiety about personal security"@en ;
+               rdfs:label "Safety Concern"@en .
+
+
+:SafetyManagement rdfs:comment "Strategic behaviors and cognitive processes aimed at maintaining personal security during cat calling encounters"@en ;
+                  rdfs:label "Safety Management"@en .
+
+
+:SafetySeeking rdfs:comment "Active behavior aimed at establishing or maintaining personal safety in response to cat calling"@en ,
+                            "Active pursuit of safer conditions or circumstances"@en ;
+               rdfs:label "Safety Seeking"@en .
+
+
+:SelfProtection rdfs:comment "Actions specifically aimed at defending oneself from perceived threats"@en ;
+                rdfs:label "Self Protection"@en .
+
+
+:SituationComfort rdfs:comment "Relative ease in handling the harassment situation"@en ;
+                  rdfs:label "Situation Comfort"@en .
+
+
+:SituationalAwareness rdfs:comment "Comprehensive understanding of current circumstances"@en ;
+                      rdfs:label "Situational Awareness"@en .
+
+
+:SituationalPresence rdfs:comment "Level of engagement with immediate circumstances"@en ;
+                     rdfs:label "Situational Presence"@en .
+
+
+:SocialCluster rdfs:comment "A cluster of frames related to social interaction, positioning, and interpersonal dynamics"@en ;
+               rdfs:label "Social Cluster"@en .
+
+
+:SocialDiscomfort rdfs:comment "Unease in social interaction during harassment"@en ;
+                  rdfs:label "Social Discomfort"@en .
+
+
+:SocialPositioning rdfs:comment "Management of social identity and relationships during cat calling encounters"@en ;
+                   rdfs:label "Social Positioning"@en .
+
+
+:SocialProtection rdfs:comment "Strategic behaviors aimed at maintaining social safety during cat calling encounters"@en ;
+                  rdfs:label "Social Protection"@en .
+
+
+:SpaceManagement rdfs:comment "Control and organization of physical space for safety"@en ;
+                 rdfs:label "Space Management"@en .
+
+
+:SpaceScanning rdfs:comment "Visual assessment of surrounding physical environment"@en ;
+               rdfs:label "Space Scanning"@en .
+
+
+:SpatialStrategy rdfs:comment "Planned use of physical space for protection or escape"@en ;
+                 rdfs:label "Spatial Strategy"@en .
+
+
+:StrategicPlanning rdfs:comment "Deliberate cognitive process of developing action plans to handle challenging situations"@en ;
+                   rdfs:label "Strategic Planning"@en .
+
+
+:StrategicPoliteness rdfs:comment "Using courtesy tactically for self-protection"@en ;
+                     rdfs:label "Strategic Politeness"@en .
+
+
+:StrongPresence rdfs:comment "High level of psychological engagement despite harassment"@en ;
+                rdfs:label "Strong Presence"@en .
+
+
+:TechnicalCuriosity rdfs:comment "Interest in understanding mechanical aspects of the situation"@en ;
+                    rdfs:label "Technical Curiosity"@en .
+
+
+:TemporalShift rdfs:comment "Change in temporal experience during harassment"@en ;
+               rdfs:label "Temporal Shift"@en .
+
+
+:ThreatAnticipation rdfs:comment "Expectation and preparation for potential danger"@en ;
+                    rdfs:label "Threat Anticipation"@en .
+
+
+:ThreatMonitoring rdfs:comment "Continuous assessment of potential dangers"@en ;
+                  rdfs:label "Threat Monitoring"@en .
+
+
+:TotalAvoidance rdfs:comment "Complete evasion of all interaction or engagement"@en ;
+                rdfs:label "Total Avoidance"@en .
+
+
+:UnfulfilledSecurity rdfs:comment "Persistent sense of safety needs not being met"@en ;
+                     rdfs:label "Unfulfilled Security"@en .
+
+
+:UnwantedAttention rdfs:comment "Receipt of unwelcome social or sexual attention"@en ;
+                   rdfs:label "Unwanted Attention"@en .
+
+
+:VariedStrategies rdfs:comment "Use of multiple different coping approaches"@en ;
+                  rdfs:label "Varied Strategies"@en .
+
+
+:ViolenceFear rdfs:comment "Specific fear of potential physical harm"@en ;
+              rdfs:label "Violence Fear"@en .
+
+
+:VolumeAwareness rdfs:comment "Consciousness of sound levels and their implications"@en ;
+                 rdfs:label "Volume Awareness"@en .
+
+
+:Vulnerability rdfs:comment "Sense of being susceptible to harm or damage"@en ;
+               rdfs:label "Vulnerability"@en .
+
+
+:WaitingBehavior rdfs:comment "Strategic use of waiting time for safety"@en ;
+                 rdfs:label "Waiting Behavior"@en .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
